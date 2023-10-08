@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,10 +11,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class TurtleRobot {
     /* Public OpMode members. */
-    public DcMotorEx rightFront = null;
-    public DcMotorEx rightBack = null;
-    public DcMotorEx leftFront = null;
-    public DcMotorEx leftBack = null;
+    public  DcMotor rightFront = null;
+    public  DcMotor rightBack = null;
+    public DcMotor leftFront = null;
+    public  DcMotor leftBack = null;
     public ElapsedTime runtime = new ElapsedTime();
     public LinearOpMode myOpMode = null;
 
