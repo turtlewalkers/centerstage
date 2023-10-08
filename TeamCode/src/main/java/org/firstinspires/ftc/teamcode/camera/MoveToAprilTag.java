@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp
 public class MoveToAprilTag extends LinearOpMode {
+    private static final int DESIRED_TAG_ID = 1; // TODO: change this when needed
     final double DESIRED_DISTANCE = 12.0;
     final double SPEED_GAIN  =  0.02  ;
     final double STRAFE_GAIN =  0.015 ;
@@ -35,7 +36,6 @@ public class MoveToAprilTag extends LinearOpMode {
     final double MAX_AUTO_TURN  = 0.3;
     TurtleRobot robot = new TurtleRobot(this);
 
-    private static final int DESIRED_TAG_ID = 0;
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
     private AprilTagDetection desiredTag = null;
