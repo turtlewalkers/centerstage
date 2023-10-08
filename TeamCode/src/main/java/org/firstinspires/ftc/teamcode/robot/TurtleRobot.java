@@ -37,8 +37,8 @@ public class TurtleRobot {
         rightFront = hwMap.get(DcMotorEx.class, "rightFront");
         rightBack = hwMap.get(DcMotorEx.class, "rightBack");
 
-        leftFront.setDirection(DcMotorEx.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        leftBack.setDirection(DcMotorEx.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        leftFront.setDirection(DcMotorEx.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        leftBack.setDirection(DcMotorEx.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         rightFront.setDirection(DcMotorEx.Direction.FORWARD);
         rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
