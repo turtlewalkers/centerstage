@@ -13,7 +13,8 @@ public class Servo extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             robot.left.setPower(gamepad1.left_trigger);
-            robot.right.setPower(-gamepad1.right_trigger);
+            robot.right.setPower(gamepad1.right_stick_y);
+            robot.middle.setPower(gamepad1.left_stick_y);
         }
     }
 }
