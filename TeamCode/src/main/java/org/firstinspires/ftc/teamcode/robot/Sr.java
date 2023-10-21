@@ -11,6 +11,7 @@ public class Sr {
     public LinearOpMode myOpMode = null;
     public CRServo left = null;
     public CRServo right = null;
+    public CRServo middle = null;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -28,7 +29,7 @@ public class Sr {
 
         left = hwMap.get(CRServo.class, "left");
         right = hwMap.get(CRServo.class, "right");
-
+        middle = hwMap.get(CRServo.class, "middle");
     }
 
 
