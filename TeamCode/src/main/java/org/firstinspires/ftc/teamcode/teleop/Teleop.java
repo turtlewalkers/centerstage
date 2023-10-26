@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static java.lang.Math.max;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -14,15 +17,20 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 public class Teleop extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
     private ElapsedTime runtime = new ElapsedTime();
+    int SLIDE_HEIGHT = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+
         robot.init(hardwareMap);
-        robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         waitForStart();
 
         while (opModeIsActive()) {
@@ -58,8 +66,63 @@ public class Teleop extends LinearOpMode {
             robot.middle.setPower(intakePower);
 
             // slides
-            if (gamepad2.b) {
-                encoderDrive(0.1, 12, 2);
+            if (gamepad1.a) {
+                robot.leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                    telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("reset to 0");
+                telemetry.update();
+
+            }
+            if (gamepad1.b) {
+                SLIDE_HEIGHT -= 1000;
+                SLIDE_HEIGHT = max(-3000, SLIDE_HEIGHT);
+                robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+                robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
+                robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.leftSlide.setPower(1);
+                robot.rightSlide.setPower(1);
+                while (
+                        robot.leftSlide.isBusy() &&
+                                robot.rightSlide.isBusy() &&
+                              opModeIsActive()) {
+                    telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                    telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                    telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                    telemetry.addLine("running");
+                    telemetry.update();
+                    idle();
+                }
+                robot.leftSlide.setPower(0);
+                robot.rightSlide.setPower(0);
+                robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+            if (gamepad1.x) {
+                SLIDE_HEIGHT = 0;
+                robot.leftSlide.setTargetPosition(0);
+                robot.rightSlide.setTargetPosition(0);
+                robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.leftSlide.setPower(1);
+                robot.rightSlide.setPower(1);
+                while (
+                        robot.leftSlide.isBusy() &&
+                                robot.rightSlide.isBusy() &&
+                                        opModeIsActive()) {
+                    telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                    telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                    telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                    telemetry.addLine("running");
+                    telemetry.update();
+                    idle();
+                }
+                robot.leftSlide.setPower(0);
+                robot.rightSlide.setPower(0);
+                robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             robot.leftSlide.setPower(gamepad2.right_stick_y/5);
             robot.rightSlide.setPower(gamepad2.right_stick_y/5);
@@ -69,30 +132,6 @@ public class Teleop extends LinearOpMode {
             int planePower = 0;
             if (gamepad2.x) planePower = -1;
             robot.plane.setPower(planePower);
-        }
-    }
-
-    public void encoderDrive(double speed, double inches, double timeoutS) {
-        int newLeftTarget;
-
-        if (opModeIsActive()) {
-
-            newLeftTarget = robot.leftSlide.getCurrentPosition() + (int)(inches);
-            robot.leftSlide.setTargetPosition(newLeftTarget);
-
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            runtime.reset();
-            robot.leftSlide.setPower(Math.abs(speed));
-
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (robot.leftSlide.isBusy())) {
-            }
-
-            robot.leftSlide.setPower(0);
-
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 }

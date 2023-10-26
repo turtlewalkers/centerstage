@@ -68,7 +68,5 @@ public class TurtleRobot {
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
