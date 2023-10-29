@@ -22,8 +22,10 @@ public class TurtleRobot {
     public CRServo left = null;
     public CRServo right = null;
     public CRServo middle = null;
+    public Servo arm = null;
     public Servo linear = null;
     public CRServo plane = null;
+    public CRServo boxServo = null;
     /* local OpMode members. */
     HardwareMap hwMap = null;
     public ElapsedTime period = new ElapsedTime();
@@ -48,8 +50,10 @@ public class TurtleRobot {
         left = hwMap.get(CRServo.class, "left");
         right = hwMap.get(CRServo.class, "right");
         middle = hwMap.get(CRServo.class, "middle");
+        arm = hwMap.get(Servo.class, "arm");
         linear = hwMap.get(Servo.class, "linear");
         plane = hwMap.get(CRServo.class, "plane");
+        boxServo = hwMap.get(CRServo.class, "boxServo");
 
         leftFront.setDirection(DcMotorEx.Direction.FORWARD);
         leftBack.setDirection(DcMotorEx.Direction.REVERSE);
