@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.camera;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionPortal.CameraState;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -14,98 +16,86 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 /*
- * This OpMode illustrates the basics of using both AprilTag recognition and TensorFlow
- * Object Detection.
+ * This OpMode illustrates the basics of AprilTag recognition and pose estimation, using
+ * two webcams.
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp
 public class TwoCamera extends LinearOpMode {
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+
+    /*
+     * Variables used for switching cameras.
+     */
+    private WebcamName webcam1, webcam2;
+    private boolean oldLeftBumper;
+    private boolean oldRightBumper;
 
     /**
      * The variable to store our instance of the AprilTag processor.
      */
     private AprilTagProcessor aprilTag;
 
-    /**
-     * The variable to store our instance of the TensorFlow Object Detection processor.
-     */
     private TfodProcessor tfod;
 
     /**
      * The variable to store our instance of the vision portal.
      */
-    private VisionPortal myVisionPortal;
+    private VisionPortal visionPortal;
 
     @Override
     public void runOpMode() {
-        initDoubleVision();
 
-        // This OpMode loops continuously, allowing the user to switch between
-        // AprilTag and TensorFlow Object Detection (TFOD) image processors.
-        while (!isStopRequested())  {
+        initCameras();
 
-            if (opModeInInit()) {
-                telemetry.addData("DS preview on/off","3 dots, Camera Stream");
-                telemetry.addLine();
-                telemetry.addLine("----------------------------------------");
-            }
+        // Wait for the DS start button to be touched.
+        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.update();
+        waitForStart();
 
-            if (myVisionPortal.getProcessorEnabled(aprilTag)) {
-                // User instructions: Dpad left or Dpad right.
-                telemetry.addLine("Dpad Left to disable AprilTag");
-                telemetry.addLine();
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
+
+                telemetryCameraSwitching();
                 telemetryAprilTag();
-            } else {
-                telemetry.addLine("Dpad Right to enable AprilTag");
-            }
-            telemetry.addLine();
-            telemetry.addLine("----------------------------------------");
-            if (myVisionPortal.getProcessorEnabled(tfod)) {
-                telemetry.addLine("Dpad Down to disable TFOD");
-                telemetry.addLine();
                 telemetryTfod();
-            } else {
-                telemetry.addLine("Dpad Up to enable TFOD");
+
+                // Push telemetry to the Driver Station.
+                telemetry.update();
+
+                // Save CPU resources; can resume streaming when needed.
+                if (gamepad1.dpad_down) {
+                    visionPortal.stopStreaming();
+                } else if (gamepad1.dpad_up) {
+                    visionPortal.resumeStreaming();
+                }
+
+                doCameraSwitching();
+
+                // Share the CPU.
+                sleep(20);
             }
+        }
 
-            // Push telemetry to the Driver Station.
-            telemetry.update();
+        // Save more CPU resources when camera is no longer needed.
+        visionPortal.close();
 
-            if (gamepad1.dpad_left) {
-                myVisionPortal.setProcessorEnabled(aprilTag, false);
-            } else if (gamepad1.dpad_right) {
-                myVisionPortal.setProcessorEnabled(aprilTag, true);
-            }
-            if (gamepad1.dpad_down) {
-                myVisionPortal.setProcessorEnabled(tfod, false);
-            } else if (gamepad1.dpad_up) {
-                myVisionPortal.setProcessorEnabled(tfod, true);
-            }
-
-            sleep(20);
-
-        }   // end while loop
-
-    }   // end method runOpMode()
-
+    }   // end runOpMode()
 
     /**
-     * Initialize AprilTag and TFOD.
+     * Initialize the AprilTag processor.
      */
-    private void initDoubleVision() {
-        // -----------------------------------------------------------------------------------------
-        // AprilTag Configuration
-        // -----------------------------------------------------------------------------------------
+    private void initCameras() {
 
-        aprilTag = new AprilTagProcessor.Builder()
-                .build();
+        // Create the AprilTag processor by using a builder.
+        aprilTag = new AprilTagProcessor.Builder().build();
 
-        // -----------------------------------------------------------------------------------------
-        // TFOD Configuration
-        // -----------------------------------------------------------------------------------------
+        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+        CameraName switchableCamera = ClassFactory.getInstance()
+                .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
 
         tfod = new TfodProcessor.Builder()
                 .build();
@@ -114,23 +104,36 @@ public class TwoCamera extends LinearOpMode {
         // Camera Configuration
         // -----------------------------------------------------------------------------------------
 
-        if (USE_WEBCAM) {
-            myVisionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+        visionPortal = new VisionPortal.Builder()
+                    .setCamera(switchableCamera)
                     .addProcessors(tfod, aprilTag)
                     .build();
+
+        tfod.setMinResultConfidence(0.25f);
+
+
+    }   // end method init()
+
+    /**
+     * Add telemetry about camera switching.
+     */
+    private void telemetryCameraSwitching() {
+
+        if (visionPortal.getActiveCamera().equals(webcam1)) {
+            telemetry.addData("activeCamera", "Webcam 1");
+            telemetry.addData("Press RightBumper", "to switch to Webcam 2");
         } else {
-            myVisionPortal = new VisionPortal.Builder()
-                    .setCamera(BuiltinCameraDirection.BACK)
-                    .addProcessors(tfod, aprilTag)
-                    .build();
+            telemetry.addData("activeCamera", "Webcam 2");
+            telemetry.addData("Press LeftBumper", "to switch to Webcam 1");
         }
-    }   // end initDoubleVision()
+
+    }   // end method telemetryCameraSwitching()
 
     /**
      * Add telemetry about AprilTag detections.
      */
     private void telemetryAprilTag() {
+
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
@@ -147,11 +150,13 @@ public class TwoCamera extends LinearOpMode {
             }
         }   // end for() loop
 
+        // Add "key" information to telemetry
+        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        telemetry.addLine("RBE = Range, Bearing & Elevation");
+
     }   // end method telemetryAprilTag()
 
-    /**
-     * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
-     */
     private void telemetryTfod() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
@@ -168,5 +173,25 @@ public class TwoCamera extends LinearOpMode {
         }   // end for() loop
 
     }   // end method telemetryTfod()
+
+    /**
+     * Set the active camera according to input from the gamepad.
+     */
+    private void doCameraSwitching() {
+        if (visionPortal.getCameraState() == CameraState.STREAMING) {
+            // If the left bumper is pressed, use Webcam 1.
+            // If the right bumper is pressed, use Webcam 2.
+            boolean newLeftBumper = gamepad1.left_bumper;
+            boolean newRightBumper = gamepad1.right_bumper;
+            if (newLeftBumper && !oldLeftBumper) {
+                visionPortal.setActiveCamera(webcam1);
+            } else if (newRightBumper && !oldRightBumper) {
+                visionPortal.setActiveCamera(webcam2);
+            }
+            oldLeftBumper = newLeftBumper;
+            oldRightBumper = newRightBumper;
+        }
+
+    }   // end method doCameraSwitching()
 
 }   // end class

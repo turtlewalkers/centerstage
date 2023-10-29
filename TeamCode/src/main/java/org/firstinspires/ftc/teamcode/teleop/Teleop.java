@@ -13,6 +13,24 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleTankDrive;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 
+/*
+ standard driving
+ gamepad2 a for intake
+ - move 4 servos
+ - makes boxservo keep on moving
+ gamepad 2 x makes arm go up
+ gamepad 2 y makes arm go down
+ gamepad 2 left bumper makes the plane fly
+ gamepad 2 b for dropping pixel
+ TODO: gamepad 2 left trigger for linear servo
+
+ gamepad1 a is to reset slides
+ gamepad1 right bumper is move slides up a little
+ gamepad1 left bumper is move slides all the way down
+  - moves arm down
+*/
+
+
 @TeleOp
 public class Teleop extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
@@ -60,22 +78,31 @@ public class Teleop extends LinearOpMode {
 
             // intake
             int intakePower = 0;
-            if (gamepad2.a) intakePower = -1;
+            if (gamepad2.a) {
+                intakePower = -1;
+                robot.linear.setPosition(0.75);
+            } else if (gamepad2.dpad_up) {
+                robot.linear.setPosition(0);
+            } else if (gamepad2.dpad_right) {
+                robot.linear.setPosition(1);
+            } else if (gamepad2.dpad_left){
+                robot.linear.setPosition(0.72);
+            }
             robot.left.setPower(intakePower);
             robot.right.setPower(-intakePower);
             robot.middle.setPower(intakePower);
+            robot.boxServo.setPower(intakePower);
 
             // slides
-            if (gamepad1.a) {
+            if (gamepad1.dpad_down) {
                 robot.leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
                     telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
                 telemetry.addLine("reset to 0");
                 telemetry.update();
-
             }
-            if (gamepad1.b) {
+            if (gamepad1.right_bumper) {
                 SLIDE_HEIGHT -= 1000;
                 SLIDE_HEIGHT = max(-3000, SLIDE_HEIGHT);
                 robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
@@ -100,7 +127,9 @@ public class Teleop extends LinearOpMode {
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
-            if (gamepad1.x) {
+            if (gamepad1.left_bumper) {
+                robot.arm.setPosition(1);
+                robot.linear.setPosition(0.72);
                 SLIDE_HEIGHT = 0;
                 robot.leftSlide.setTargetPosition(0);
                 robot.rightSlide.setTargetPosition(0);
@@ -124,13 +153,22 @@ public class Teleop extends LinearOpMode {
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
-            robot.leftSlide.setPower(gamepad2.right_stick_y/5);
-            robot.rightSlide.setPower(gamepad2.right_stick_y/5);
-            robot.linear.setPosition(gamepad2.left_stick_y/5);
+
+            // box
+            if (gamepad2.x) {
+                robot.arm.setPosition(0.8);
+            }
+            else if (gamepad2.y) {
+                robot.arm.setPosition(0.51);
+            }
+
+            if (gamepad2.b) robot.boxServo.setPower(1);
+
+
 
             // plane
             int planePower = 0;
-            if (gamepad2.x) planePower = -1;
+            if (gamepad2.left_bumper) planePower = -1;
             robot.plane.setPower(planePower);
         }
     }
