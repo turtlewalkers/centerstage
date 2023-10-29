@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -24,6 +26,7 @@ import java.util.Objects;
  */
 @Autonomous
 public class AutonomousBlueClose extends LinearOpMode {
+    TurtleRobot robot = new TurtleRobot(this);
     private WebcamName webcam1, webcam2;
 
     int PIXEL_POSITION = 1;
@@ -40,7 +43,11 @@ public class AutonomousBlueClose extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        robot.init(hardwareMap);
+        robot.leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         initTfod();
 
         // Wait for the DS start button to be touched.
@@ -50,22 +57,38 @@ public class AutonomousBlueClose extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
 
-                telemetryTfod();
+            telemetryTfod();
+            telemetry.addData("Pixel position", PIXEL_POSITION);
 
-                // Push telemetry to the Driver Station.
-                telemetry.update();
 
-                // Save CPU resources; can resume streaming when needed.
-                if (gamepad1.dpad_down) {
-                    visionPortal.stopStreaming();
-                } else if (gamepad1.dpad_up) {
-                    visionPortal.resumeStreaming();
-                } 
+            // Push telemetry to the Driver Station.
+            telemetry.update();
 
-                // Share the CPU.
-                sleep(20);
+            sleep(2000);
+
+            if (PIXEL_POSITION == 1) {
+
+            } else if (PIXEL_POSITION == 2) {
+                robot.leftFront.setPower(0.55);robot.leftBack.setPower(0.55);robot.rightFront.setPower(0.55);robot.rightBack.setPower(0.55);
+                sleep(1500);
+                robot.leftFront.setPower(0);robot.leftBack.setPower(0);robot.rightFront.setPower(0);robot.rightBack.setPower(0);
+                
+                robot.left.setPower(0.1);robot.right.setPower(-0.1);
+                sleep(5000);
+                robot.left.setPower(0);robot.right.setPower(0);
+            } else {
+                robot.leftFront.setPower(0.55);robot.leftBack.setPower(0.55);robot.rightFront.setPower(0.55);robot.rightBack.setPower(0.55);
+                sleep(1000);
+                robot.leftFront.setPower(0);robot.leftBack.setPower(0);robot.rightFront.setPower(0);robot.rightBack.setPower(0);
+
+                robot.leftFront.setPower(0.25);robot.leftBack.setPower(0.25);robot.rightFront.setPower(-0.25);robot.rightBack.setPower(-0.25);
+                sleep(1000);
+                robot.leftFront.setPower(0);robot.leftBack.setPower(0);robot.rightFront.setPower(0);robot.rightBack.setPower(0);
+
+                robot.left.setPower(0.1);robot.right.setPower(-0.1);
+                sleep(5000);
+                robot.left.setPower(0);robot.right.setPower(0);
             }
         }
 
@@ -126,7 +149,7 @@ public class AutonomousBlueClose extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.5f);
+        tfod.setMinResultConfidence(0.25f);
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);
@@ -148,16 +171,17 @@ public class AutonomousBlueClose extends LinearOpMode {
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
             if (Objects.equals(recognition.getLabel(), "Pixel")) {
 
-                if (x > 50 && x < 100) {
-                    PIXEL_POSITION = 2;
-                } else if (x >= 100) {
+                if (x > 520) {
                     PIXEL_POSITION = 3;
+                } else if (x >= 200 && x <= 416) {
+                    PIXEL_POSITION = 2;
+                } else {
+                    PIXEL_POSITION = 1;
                 }
                 telemetry.addData("", " ");
                 telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
                 telemetry.addData("- Position x / y", "%.0f / %.0f", x, y);
                 telemetry.addData("- Size h x w", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-                telemetry.addData("Pixel position", PIXEL_POSITION);
             }
         }   // end for() loop
 
