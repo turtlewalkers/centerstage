@@ -49,6 +49,8 @@ public class Teleop extends LinearOpMode {
         robot.leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         robot.leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         waitForStart();
 
         while (opModeIsActive()) {
@@ -80,13 +82,14 @@ public class Teleop extends LinearOpMode {
             int intakePower = 0;
             if (gamepad2.a) {
                 intakePower = -1;
-                robot.linear.setPosition(0.75);
+                robot.linear.setPosition(0.55);
             } else if (gamepad2.dpad_up) {
                 robot.linear.setPosition(0);
             } else if (gamepad2.dpad_right) {
                 robot.linear.setPosition(1);
             } else if (gamepad2.dpad_left){
-                robot.linear.setPosition(0.72);
+                robot.arm.setPosition(0.44);
+                robot.linear.setPosition(0.4);
             }
             robot.left.setPower(intakePower);
             robot.right.setPower(-intakePower);
@@ -128,8 +131,11 @@ public class Teleop extends LinearOpMode {
                 robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             if (gamepad1.left_bumper) {
-                robot.arm.setPosition(1);
-                robot.linear.setPosition(0.72);
+                robot.arm.setPosition(0.44);
+                robot.linear.setPosition(0.4);
+                if (SLIDE_HEIGHT == 1000) {
+                    sleep(500);
+                }
                 SLIDE_HEIGHT = 0;
                 robot.leftSlide.setTargetPosition(0);
                 robot.rightSlide.setTargetPosition(0);
@@ -156,15 +162,16 @@ public class Teleop extends LinearOpMode {
 
             // box
             if (gamepad2.x) {
-                robot.arm.setPosition(0.8);
+                robot.arm.setPosition(0);
             }
             else if (gamepad2.y) {
-                robot.arm.setPosition(0.51);
+                robot.arm.setPosition(0.2);
+            } else if (gamepad2.right_bumper) {
+                robot.arm.setPosition(0.44);
             }
 
             if (gamepad2.b) robot.boxServo.setPower(1);
-
-
+//            robot.arm.setPosition(gamepad2.left_stick_y);
 
             // plane
             int planePower = 0;

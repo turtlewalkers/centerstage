@@ -57,33 +57,51 @@ public class AutonomousBlueClose extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-
             telemetryTfod();
             telemetry.addData("Pixel position", PIXEL_POSITION);
-
-
             // Push telemetry to the Driver Station.
             telemetry.update();
 
-            sleep(2000);
+            sleep(5000);
 
             if (PIXEL_POSITION == 1) {
-
-            } else if (PIXEL_POSITION == 2) {
+                // forward
                 robot.leftFront.setPower(0.55);robot.leftBack.setPower(0.55);robot.rightFront.setPower(0.55);robot.rightBack.setPower(0.55);
-                sleep(1500);
+                sleep(950);
                 robot.leftFront.setPower(0);robot.leftBack.setPower(0);robot.rightFront.setPower(0);robot.rightBack.setPower(0);
+
+                // turn right
+                robot.leftFront.setPower(0.5);robot.leftBack.setPower(0.5);robot.rightFront.setPower(-0.5);robot.rightBack.setPower(-0.5);
+                sleep(950);
+                robot.leftFront.setPower(0);robot.leftBack.setPower(0);robot.rightFront.setPower(0);robot.rightBack.setPower(0);
+
+                // backwards
+                robot.leftFront.setPower(-0.55);robot.leftBack.setPower(-0.55);robot.rightFront.setPower(-0.55);robot.rightBack.setPower(-0.55);
+                sleep(970);
+                robot.leftFront.setPower(0);robot.leftBack.setPower(0);robot.rightFront.setPower(0);robot.rightBack.setPower(0);
+
+                // outake
+                robot.left.setPower(0.1);robot.right.setPower(-0.1);
+                sleep(5000);
+                robot.left.setPower(0);robot.right.setPower(0);
                 
+            } else if (PIXEL_POSITION == 2) {
+                telemetry.addData("Pixel position E :", PIXEL_POSITION);
+                robot.leftFront.setPower(0.55);robot.leftBack.setPower(0.55);robot.rightFront.setPower(0.55);robot.rightBack.setPower(0.55);
+                sleep(1050);
+                robot.leftFront.setPower(0);robot.leftBack.setPower(0);robot.rightFront.setPower(0);robot.rightBack.setPower(0);
+
                 robot.left.setPower(0.1);robot.right.setPower(-0.1);
                 sleep(5000);
                 robot.left.setPower(0);robot.right.setPower(0);
             } else {
+                telemetry.addLine("Pixel position Else");
                 robot.leftFront.setPower(0.55);robot.leftBack.setPower(0.55);robot.rightFront.setPower(0.55);robot.rightBack.setPower(0.55);
-                sleep(1000);
+                sleep(800);
                 robot.leftFront.setPower(0);robot.leftBack.setPower(0);robot.rightFront.setPower(0);robot.rightBack.setPower(0);
 
                 robot.leftFront.setPower(0.25);robot.leftBack.setPower(0.25);robot.rightFront.setPower(-0.25);robot.rightBack.setPower(-0.25);
-                sleep(1000);
+                sleep(1200);
                 robot.leftFront.setPower(0);robot.leftBack.setPower(0);robot.rightFront.setPower(0);robot.rightBack.setPower(0);
 
                 robot.left.setPower(0.1);robot.right.setPower(-0.1);
@@ -173,7 +191,7 @@ public class AutonomousBlueClose extends LinearOpMode {
 
                 if (x > 520) {
                     PIXEL_POSITION = 3;
-                } else if (x >= 200 && x <= 416) {
+                } else if (x <= 500) {
                     PIXEL_POSITION = 2;
                 } else {
                     PIXEL_POSITION = 1;
