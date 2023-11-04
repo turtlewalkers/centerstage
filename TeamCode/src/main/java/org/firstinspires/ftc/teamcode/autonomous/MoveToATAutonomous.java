@@ -1,33 +1,31 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.max;
 
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous
-public class MoveToAprilTagAutonomous extends LinearOpMode {
-    private static final int DESIRED_TAG_ID = 2; // TODO: change this when needed
-    final double DESIRED_DISTANCE = 0;
+public class MoveToATAutonomous extends LinearOpMode {
+    private static final int DESIRED_TAG_ID = 1; // TODO: change this when needed
+    final double DESIRED_DISTANCE = 1.5;
     final double SPEED_GAIN  =  0.02;
     int SLIDE_HEIGHT = -2000;
     private ElapsedTime runtime = new ElapsedTime();
@@ -80,33 +78,18 @@ public class MoveToAprilTagAutonomous extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            // initial detection
-            targetFound = false;
-            desiredTag  = null;
-
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            for (AprilTagDetection detection : currentDetections) {
-                if ((detection.metadata != null) &&
-                        ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
-                    targetFound = true;
-                    desiredTag = detection;
-                    break;
-                } else {
-                    telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
-                }
-            }
 
             // go to april tag
             runtime.reset();
-            while (runtime.seconds() < 5) {
-
+            while (runtime.seconds() < 9) {
+                // initial detection
                 targetFound = false;
                 desiredTag = null;
 
-                currentDetections = aprilTag.getDetections();
+                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
                 for (AprilTagDetection detection : currentDetections) {
                     if ((detection.metadata != null) &&
-                            ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
+                            ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))) {
                         targetFound = true;
                         desiredTag = detection;
                         break;
@@ -116,107 +99,103 @@ public class MoveToAprilTagAutonomous extends LinearOpMode {
                 }
 
                 if (targetFound) {
-                    telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
+                    telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
                     telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                    telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-                    telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-                    telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+                    telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
+                    telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
+                    telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
 
-                    if (abs(desiredTag.ftcPose.range - DESIRED_DISTANCE) <= 8 &&
-                            abs(desiredTag.ftcPose.bearing) <= 6 &&
-                            abs(desiredTag.ftcPose.yaw) <= 6) {
-                        break;
-                    }
-                } else {
-                    telemetry.addData(">","Drive using joysticks to find valid target\n");
-                }
 
-                if (gamepad1.left_bumper && targetFound) {
+                    double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                    double headingError = -desiredTag.ftcPose.bearing;
+                    double yawError = desiredTag.ftcPose.yaw;
 
-                    double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                    double  headingError    = -desiredTag.ftcPose.bearing;
-                    double  yawError        = desiredTag.ftcPose.yaw;
-
-                    drive  = -Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                    turn   = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                    drive = -Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                    turn = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
                     strafe = -Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
-                    telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                    telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
                 } else {
-
-                    drive  = -gamepad1.left_stick_y  / 2.0;
-                    strafe = -gamepad1.left_stick_x  / 2.0;
-                    turn   = -gamepad1.right_stick_x / 3.0;
-                    telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                    telemetry.addData(">", "Drive using joysticks to find valid target\n");
+                    drive = -gamepad1.left_stick_y / 2.0;
+                    strafe = -gamepad1.left_stick_x / 2.0;
+                    turn = -gamepad1.right_stick_x / 3.0;
+                    telemetry.addData("Manual", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
                 }
+
                 telemetry.update();
-
-                moveRobot(drive * 0.7, strafe * 0.7, turn * 0.7);
-                sleep(10);
+                moveRobot(drive, strafe, turn);
+                sleep(20);
             }
+
+            // strafe right a little bit
+            moveRobot(0, 0.5, 0);
+            sleep(300);
+            moveRobot(0, 0, 0);
+
+            // move linear slide up
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftSlide.setPower(1);
+            robot.rightSlide.setPower(1);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
+            robot.leftSlide.setPower(0);
+            robot.rightSlide.setPower(0);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            // move servo and score pixel
+            robot.arm.setPosition(0.2);
+            robot.boxServo.setPower(1);
+            sleep(2000);
+            robot.boxServo.setPower(0);
+
+            // move linear slide back
+            robot.arm.setPosition(0.44);
+            robot.linear.setPosition(0.4);
+            robot.leftSlide.setTargetPosition(0);
+            robot.rightSlide.setTargetPosition(0);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftSlide.setPower(1);
+            robot.rightSlide.setPower(1);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
+            robot.leftSlide.setPower(0);
+            robot.rightSlide.setPower(0);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            moveRobot(0, 0.5, 0);
+            sleep(1500 + 500 * (3 - DESIRED_TAG_ID));
+            moveRobot(-0.5, 0, 0);
+            sleep(750);
+            moveRobot(0, 0, 0);
         }
-
-        // strafe right a little bit
-        moveRobot(0,0.5,0);
-        sleep(300);
-        moveRobot(0,0,0);
-
-        // move linear slide up
-        robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
-        robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
-        robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.leftSlide.setPower(1);
-        robot.rightSlide.setPower(1);
-        while (
-                robot.leftSlide.isBusy() &&
-                        robot.rightSlide.isBusy() &&
-                        opModeIsActive()) {
-            telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-            telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-            telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-            telemetry.addLine("running");
-            telemetry.update();
-            idle();
-        }
-        robot.leftSlide.setPower(0);
-        robot.rightSlide.setPower(0);
-        robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // move servo and score pixel
-        robot.arm.setPosition(0.2);
-        robot.boxServo.setPower(1);
-        sleep(2000);
-        robot.boxServo.setPower(0);
-
-        // move linear slide back
-        robot.arm.setPosition(0.44);
-        robot.linear.setPosition(0.4);
-        robot.leftSlide.setTargetPosition(0);
-        robot.rightSlide.setTargetPosition(0);
-        robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.leftSlide.setPower(1);
-        robot.rightSlide.setPower(1);
-        while (
-                robot.leftSlide.isBusy() &&
-                        robot.rightSlide.isBusy() &&
-                        opModeIsActive()) {
-            telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-            telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-            telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-            telemetry.addLine("running");
-            telemetry.update();
-            idle();
-        }
-        robot.leftSlide.setPower(0);
-        robot.rightSlide.setPower(0);
-        robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void moveRobot(double x, double y, double yaw) {
+    private void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
         double leftFrontPower = x - y - yaw;
         double rightFrontPower = x + y + yaw;
