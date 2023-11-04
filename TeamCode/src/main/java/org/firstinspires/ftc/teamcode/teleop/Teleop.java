@@ -37,6 +37,8 @@ public class Teleop extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     int SLIDE_HEIGHT = 0;
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -87,7 +89,7 @@ public class Teleop extends LinearOpMode {
                 robot.linear.setPosition(0);
             } else if (gamepad2.dpad_right) {
                 robot.linear.setPosition(1);
-            } else if (gamepad2.dpad_left){
+            } else if (gamepad2.dpad_left || gamepad1.dpad_left){
                 robot.arm.setPosition(0.44);
                 robot.linear.setPosition(0.4);
             }
@@ -106,8 +108,7 @@ public class Teleop extends LinearOpMode {
                 telemetry.update();
             }
             if (gamepad1.right_bumper) {
-                SLIDE_HEIGHT -= 1000;
-                SLIDE_HEIGHT = max(-3000, SLIDE_HEIGHT);
+                SLIDE_HEIGHT = -3000;
                 robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
                 robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -133,12 +134,9 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 robot.arm.setPosition(0.44);
                 robot.linear.setPosition(0.4);
-                if (SLIDE_HEIGHT == 1000) {
-                    sleep(500);
-                }
                 SLIDE_HEIGHT = 0;
-                robot.leftSlide.setTargetPosition(0);
-                robot.rightSlide.setTargetPosition(0);
+                robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+                robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.leftSlide.setPower(1);
