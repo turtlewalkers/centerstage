@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Autonomous
-public class AutonomousBlue extends LinearOpMode {
+public class RedClose extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
     int SLIDE_HEIGHT = -1500;
     private ElapsedTime runtime = new ElapsedTime();
@@ -52,7 +52,7 @@ public class AutonomousBlue extends LinearOpMode {
     private VisionPortal visionPortal;
 
     int DESIRED_TAG_ID = 3; // TODO: change this when needed
-    final double DESIRED_DISTANCE = 1.75;
+    final double DESIRED_DISTANCE = 2.3;
     final double SPEED_GAIN  =  0.02  ;
     final double STRAFE_GAIN =  0.015 ;
     final double TURN_GAIN   =  0.01  ;
@@ -128,12 +128,12 @@ public class AutonomousBlue extends LinearOpMode {
 
             sleep(1000);
 
-            if (middleDistance.getDistance(DistanceUnit.METER) < leftDistance.getDistance(DistanceUnit.METER)) {
-                PIXEL_POSITION = 2;
-            } else if (leftDistance.getDistance(DistanceUnit.METER) < middleDistance.getDistance(DistanceUnit.METER)) {
-                PIXEL_POSITION = 1;
-            } else {
+            if (rightDistance.getDistance(DistanceUnit.METER) < middleDistance.getDistance(DistanceUnit.METER)) {
                 PIXEL_POSITION = 3;
+            } else if (middleDistance.getDistance(DistanceUnit.METER) < rightDistance.getDistance(DistanceUnit.METER)) {
+                PIXEL_POSITION = 2;
+            } else {
+                PIXEL_POSITION = 1;
             }
             telemetry.addData("left", leftDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("right", rightDistance.getDistance(DistanceUnit.METER));
@@ -142,7 +142,7 @@ public class AutonomousBlue extends LinearOpMode {
             // Push telemetry to the Driver Station.
             telemetry.update();
 
-            if (PIXEL_POSITION == 1) {
+            if (PIXEL_POSITION == 3) {
                 // forward
                 robot.leftFront.setPower(0.55);
                 robot.leftBack.setPower(0.55);
@@ -155,11 +155,11 @@ public class AutonomousBlue extends LinearOpMode {
                 robot.rightBack.setPower(0);
 
                 // turn right
-                robot.leftFront.setPower(0.5);
-                robot.leftBack.setPower(0.5);
-                robot.rightFront.setPower(-0.5);
-                robot.rightBack.setPower(-0.5);
-                sleep(900);
+                robot.leftFront.setPower(-0.5);
+                robot.leftBack.setPower(-0.5);
+                robot.rightFront.setPower(0.5);
+                robot.rightBack.setPower(0.5);
+                sleep(825);
                 robot.leftFront.setPower(0);
                 robot.leftBack.setPower(0);
                 robot.rightFront.setPower(0);
@@ -170,7 +170,7 @@ public class AutonomousBlue extends LinearOpMode {
                 robot.leftBack.setPower(-0.55);
                 robot.rightFront.setPower(-0.55);
                 robot.rightBack.setPower(-0.55);
-                sleep(825);
+                sleep(700);
                 robot.leftFront.setPower(0);
                 robot.leftBack.setPower(0);
                 robot.rightFront.setPower(0);
@@ -183,12 +183,23 @@ public class AutonomousBlue extends LinearOpMode {
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
+                // backwards
+//                robot.leftFront.setPower(-0.55);
+//                robot.leftBack.setPower(-0.55);
+//                robot.rightFront.setPower(-0.55);
+//                robot.rightBack.setPower(-0.55);
+//                sleep(400);
+//                robot.leftFront.setPower(0);
+//                robot.leftBack.setPower(0);
+//                robot.rightFront.setPower(0);
+//                robot.rightBack.setPower(0);
+
                 // turn right
-                robot.leftFront.setPower(-0.5);
-                robot.leftBack.setPower(-0.5);
-                robot.rightFront.setPower(0.5);
-                robot.rightBack.setPower(0.5);
-                sleep(200);
+                robot.leftFront.setPower(0.5);
+                robot.leftBack.setPower(0.5);
+                robot.rightFront.setPower(-0.5);
+                robot.rightBack.setPower(-0.5);
+                sleep(100);
                 robot.leftFront.setPower(0);
                 robot.leftBack.setPower(0);
                 robot.rightFront.setPower(0);
@@ -222,11 +233,11 @@ public class AutonomousBlue extends LinearOpMode {
                 robot.rightFront.setPower(0);
                 robot.rightBack.setPower(0);
 
-                robot.leftFront.setPower(0.5);
-                robot.leftBack.setPower(0.5);
-                robot.rightFront.setPower(-0.5);
-                robot.rightBack.setPower(-0.5);
-                sleep(875);
+                robot.leftFront.setPower(-0.5);
+                robot.leftBack.setPower(-0.5);
+                robot.rightFront.setPower(0.5);
+                robot.rightBack.setPower(0.5);
+                sleep(900);
                 robot.leftFront.setPower(0);
                 robot.leftBack.setPower(0);
                 robot.rightFront.setPower(0);
@@ -236,7 +247,7 @@ public class AutonomousBlue extends LinearOpMode {
                 robot.leftBack.setPower(-0.55);
                 robot.rightFront.setPower(-0.55);
                 robot.rightBack.setPower(-0.55);
-                sleep(400);
+                sleep(500);
                 robot.leftFront.setPower(0);
                 robot.leftBack.setPower(0);
                 robot.rightFront.setPower(0);
@@ -247,17 +258,27 @@ public class AutonomousBlue extends LinearOpMode {
                 robot.leftBack.setPower(0.55);
                 robot.rightFront.setPower(0.55);
                 robot.rightBack.setPower(0.55);
-                sleep(675);
+                sleep(800);
                 robot.leftFront.setPower(0);
                 robot.leftBack.setPower(0);
                 robot.rightFront.setPower(0);
                 robot.rightBack.setPower(0);
 
-                robot.leftFront.setPower(0.5);
-                robot.leftBack.setPower(0.5);
-                robot.rightFront.setPower(-0.5);
-                robot.rightBack.setPower(-0.5);
-                sleep(875);
+                robot.leftFront.setPower(-0.5);
+                robot.leftBack.setPower(-0.5);
+                robot.rightFront.setPower(0.5);
+                robot.rightBack.setPower(0.5);
+                sleep(925);
+                robot.leftFront.setPower(0);
+                robot.leftBack.setPower(0);
+                robot.rightFront.setPower(0);
+                robot.rightBack.setPower(0);
+
+                robot.leftFront.setPower(0.55);
+                robot.leftBack.setPower(0.55);
+                robot.rightFront.setPower(0.55);
+                robot.rightBack.setPower(0.55);
+                sleep(150);
                 robot.leftFront.setPower(0);
                 robot.leftBack.setPower(0);
                 robot.rightFront.setPower(0);
@@ -273,130 +294,135 @@ public class AutonomousBlue extends LinearOpMode {
                 robot.leftBack.setPower(-0.55);
                 robot.rightFront.setPower(-0.55);
                 robot.rightBack.setPower(-0.55);
-                sleep(400);
+                sleep(700);
                 robot.leftFront.setPower(0);
                 robot.leftBack.setPower(0);
                 robot.rightFront.setPower(0);
                 robot.rightBack.setPower(0);
             }
 
-            /**
-             * April Tag
-             */
-
-            DESIRED_TAG_ID = PIXEL_POSITION;
-
-            runtime.reset();
-            while (runtime.seconds() < 9) {
-                // initial detection
-                targetFound = false;
-                desiredTag = null;
-
-                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                for (AprilTagDetection detection : currentDetections) {
-                    if ((detection.metadata != null) &&
-                            ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))) {
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;
-                    } else {
-                        telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
-                    }
-                }
-
-                if (targetFound) {
-                    telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
-                    telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                    telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
-                    telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
-                    telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
-
-
-                    double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                    double headingError = -desiredTag.ftcPose.bearing;
-                    double yawError = desiredTag.ftcPose.yaw;
-
-                    drive = -Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                    turn = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-                    strafe = -Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                    telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-                } else {
-                    telemetry.addData(">", "Stopping...");
-                    drive = 0;
-                    strafe = 0;
-                    turn = 0;
-                }
-
-                telemetry.update();
-                move(drive, strafe, turn);
-                sleep(20);
-            }
-
-            // strafe right a little bit
-            move(0, 0.5, 0);
-            sleep(400);
-            move(0, 0, 0);
-
-            // move linear slide up
-            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
-            while (
-                    robot.leftSlide.isBusy() &&
-                            robot.rightSlide.isBusy() &&
-                            opModeIsActive()) {
-                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-                telemetry.addLine("running");
-                telemetry.update();
-                idle();
-            }
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            // move servo and score pixel
-            robot.arm.setPosition(0.2);
-            robot.boxServo.setPower(1);
-            sleep(2000);
-            robot.boxServo.setPower(0);
-
-            // move linear slide back
-            robot.arm.setPosition(0.44);
-            robot.linear.setPosition(0.4);
-            robot.leftSlide.setTargetPosition(0);
-            robot.rightSlide.setTargetPosition(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
-            while (
-                    robot.leftSlide.isBusy() &&
-                            robot.rightSlide.isBusy() &&
-                            opModeIsActive()) {
-                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-                telemetry.addLine("running");
-                telemetry.update();
-                idle();
-            }
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            move(0, 0.5, 0);
-            sleep(1000 + 500 * (3 - DESIRED_TAG_ID));
-            move(-0.5, 0, 0);
-            sleep(750);
-            move(0, 0, 0);
+//            /**
+//             * April Tag
+//             */
+//
+//            DESIRED_TAG_ID = PIXEL_POSITION + 3;
+//
+//            runtime.reset();
+//            while (runtime.seconds() < 7) {
+//                // initial detection
+//                targetFound = false;
+//                desiredTag = null;
+//
+//                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+//                for (AprilTagDetection detection : currentDetections) {
+//                    if ((detection.metadata != null) &&
+//                            ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))) {
+//                        targetFound = true;
+//                        desiredTag = detection;
+//                        break;
+//                    } else {
+//                        telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+//                    }
+//                }
+//
+//                if (targetFound) {
+//                    telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
+//                    telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+//                    telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
+//                    telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
+//                    telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
+//
+//
+//                    double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+//                    double headingError = -desiredTag.ftcPose.bearing;
+//                    double yawError = desiredTag.ftcPose.yaw;
+//
+//                    drive = -Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+//                    turn = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+//                    strafe = -Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+//
+//                    telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+//                } else {
+//                    telemetry.addData(">", "Stopping...");
+//                    drive = 0;
+//                    strafe = 0;
+//                    turn = 0;
+//                }
+//
+//                telemetry.update();
+//                move(drive, strafe, turn);
+//                sleep(20);
+//            }
+//
+//            // strafe right a little bit
+//            move(0, 0.5, 0);
+//            sleep(350);
+//            move(0, 0, 0);
+//
+//            // move linear slide up
+//            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+//            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
+//            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.leftSlide.setPower(1);
+//            robot.rightSlide.setPower(1);
+//            while (
+//                    robot.leftSlide.isBusy() &&
+//                            robot.rightSlide.isBusy() &&
+//                            opModeIsActive()) {
+//                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+//                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+//                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+//                telemetry.addLine("running");
+//                telemetry.update();
+//                idle();
+//            }
+//            robot.leftSlide.setPower(0);
+//            robot.rightSlide.setPower(0);
+//            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//            // move servo and score pixel
+//            robot.arm.setPosition(0.2);
+//            robot.boxServo.setPower(1);
+//            sleep(2000);
+//            robot.boxServo.setPower(0);
+//
+//            // move linear slide back
+//            robot.arm.setPosition(0.44);
+//            robot.linear.setPosition(0.4);
+//            robot.leftSlide.setTargetPosition(0);
+//            robot.rightSlide.setTargetPosition(0);
+//            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.leftSlide.setPower(1);
+//            robot.rightSlide.setPower(1);
+//            while (
+//                    robot.leftSlide.isBusy() &&
+//                            robot.rightSlide.isBusy() &&
+//                            opModeIsActive()) {
+//                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+//                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+//                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+//                telemetry.addLine("running");
+//                telemetry.update();
+//                idle();
+//            }
+//            robot.leftSlide.setPower(0);
+//            robot.rightSlide.setPower(0);
+//            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//            if(PIXEL_POSITION != 1) {
+//                move(0, 0.5, 0);
+//                sleep(1000 + 500 * (6 - DESIRED_TAG_ID));
+//            } else {
+//                move(0, 0.5,0);
+//                sleep(2500);
+//            }
+//            move(-0.5, 0, 0);
+//            sleep(400);
+//            move(0, 0, 0);
 
             // Save more CPU resources when camera is no longer needed.
             visionPortal.close();
