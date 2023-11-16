@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
-
-import android.util.Size;
-
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import java.util.List;
+import android.util.Size;
+
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -17,15 +18,12 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -36,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Autonomous
-public class AutonomousBlue extends LinearOpMode {
+public class AutonomousBlueCloseParkRight extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
     int SLIDE_HEIGHT = -1500;
     private ElapsedTime runtime = new ElapsedTime();
@@ -69,6 +67,7 @@ public class AutonomousBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
         robot.init(hardwareMap);
 
         leftDistance = hardwareMap.get(DistanceSensor.class, "dl");
@@ -109,24 +108,52 @@ public class AutonomousBlue extends LinearOpMode {
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
+
+        /*
+        Trajectories
+         */
+
+        Trajectory detect = drivetrain.trajectoryBuilder(new Pose2d())
+                .forward(5)
+                .build();
+
+        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
+                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
+                .build();
+        Trajectory outtake1 = drivetrain.trajectoryBuilder(pixelposition1.end())
+                .back(21)
+                .build();
+        Trajectory backboard1 = drivetrain.trajectoryBuilder(outtake1.end())
+                .back(14)
+                .build();
+
+        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
+                .forward(25)
+                .build();
+        Trajectory goback2 = drivetrain.trajectoryBuilder(pixelposition2.end())
+                .back(4)
+                .build();
+        Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(-90)))
+                .back(10)
+                .build();
+
+        Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
+                .splineTo(new Vector2d(30,-2), Math.toRadians(-90))
+                .build();
+        Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
+                .back(50)
+                .build();
+
         waitForStart();
+
 
         if (opModeIsActive()) {
             /**
              * Pixel detection
              */
 
-            robot.leftFront.setPower(0.55);
-            robot.leftBack.setPower(0.55);
-            robot.rightFront.setPower(0.55);
-            robot.rightBack.setPower(0.55);
-            sleep(200);
-            robot.leftFront.setPower(0);
-            robot.leftBack.setPower(0);
-            robot.rightFront.setPower(0);
-            robot.rightBack.setPower(0);
-
-            sleep(1000);
+            drivetrain.followTrajectory(detect);
+//            sleep(10000);
 
             if (middleDistance.getDistance(DistanceUnit.METER) < leftDistance.getDistance(DistanceUnit.METER)) {
                 PIXEL_POSITION = 2;
@@ -135,6 +162,7 @@ public class AutonomousBlue extends LinearOpMode {
             } else {
                 PIXEL_POSITION = 3;
             }
+            PIXEL_POSITION = 3;
             telemetry.addData("left", leftDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("right", rightDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("middle", middleDistance.getDistance(DistanceUnit.METER));
@@ -143,38 +171,8 @@ public class AutonomousBlue extends LinearOpMode {
             telemetry.update();
 
             if (PIXEL_POSITION == 1) {
-                // forward
-                robot.leftFront.setPower(0.55);
-                robot.leftBack.setPower(0.55);
-                robot.rightFront.setPower(0.55);
-                robot.rightBack.setPower(0.55);
-                sleep(750);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
-
-                // turn right
-                robot.leftFront.setPower(0.5);
-                robot.leftBack.setPower(0.5);
-                robot.rightFront.setPower(-0.5);
-                robot.rightBack.setPower(-0.5);
-                sleep(900);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
-
-                // backwards
-                robot.leftFront.setPower(-0.55);
-                robot.leftBack.setPower(-0.55);
-                robot.rightFront.setPower(-0.55);
-                robot.rightBack.setPower(-0.55);
-                sleep(825);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
+                drivetrain.followTrajectory(pixelposition1);
+                drivetrain.followTrajectory(outtake1);
 
                 // outake
                 robot.left.setPower(0.1);
@@ -182,86 +180,26 @@ public class AutonomousBlue extends LinearOpMode {
                 sleep(1000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
+                sleep(1000);
 
-                // turn right
-                robot.leftFront.setPower(-0.5);
-                robot.leftBack.setPower(-0.5);
-                robot.rightFront.setPower(0.5);
-                robot.rightBack.setPower(0.5);
-                sleep(200);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
+//                drivetrain.followTrajectory(backboard1);
+                drivetrain.turn(Math.toRadians(15));
 
             } else if (PIXEL_POSITION == 2) {
-                telemetry.addData("Pixel position E :", PIXEL_POSITION);
-                robot.leftFront.setPower(0.55);
-                robot.leftBack.setPower(0.55);
-                robot.rightFront.setPower(0.55);
-                robot.rightBack.setPower(0.55);
-                sleep(850);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
-
+                drivetrain.followTrajectory(pixelposition2);
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
                 sleep(1000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
-                robot.leftFront.setPower(-0.55);
-                robot.leftBack.setPower(-0.55);
-                robot.rightFront.setPower(-0.55);
-                robot.rightBack.setPower(-0.55);
-                sleep(150);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
+                drivetrain.followTrajectory(goback2);
+                drivetrain.turn(Math.toRadians(-90));
+                drivetrain.followTrajectory(backboard2);
 
-                robot.leftFront.setPower(0.5);
-                robot.leftBack.setPower(0.5);
-                robot.rightFront.setPower(-0.5);
-                robot.rightBack.setPower(-0.5);
-                sleep(875);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
-
-                robot.leftFront.setPower(-0.55);
-                robot.leftBack.setPower(-0.55);
-                robot.rightFront.setPower(-0.55);
-                robot.rightBack.setPower(-0.55);
-                sleep(400);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
             } else {
                 telemetry.addLine("Pixel position Else");
-                robot.leftFront.setPower(0.55);
-                robot.leftBack.setPower(0.55);
-                robot.rightFront.setPower(0.55);
-                robot.rightBack.setPower(0.55);
-                sleep(675);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
-
-                robot.leftFront.setPower(0.5);
-                robot.leftBack.setPower(0.5);
-                robot.rightFront.setPower(-0.5);
-                robot.rightBack.setPower(-0.5);
-                sleep(875);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
+                drivetrain.followTrajectory(pixelposition3);
 
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
@@ -269,15 +207,7 @@ public class AutonomousBlue extends LinearOpMode {
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
-                robot.leftFront.setPower(-0.55);
-                robot.leftBack.setPower(-0.55);
-                robot.rightFront.setPower(-0.55);
-                robot.rightBack.setPower(-0.55);
-                sleep(400);
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
+                drivetrain.followTrajectory(backboard3);
             }
 
             /**

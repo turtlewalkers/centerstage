@@ -56,7 +56,7 @@ public class TurtleRobot {
         plane = hwMap.get(CRServo.class, "plane");
         boxServo = hwMap.get(CRServo.class, "boxServo");
 
-        leftFront.setDirection(DcMotorEx.Direction.FORWARD);
+        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftBack.setDirection(DcMotorEx.Direction.REVERSE);
         rightFront.setDirection(DcMotorEx.Direction.FORWARD);
         rightBack.setDirection(DcMotorEx.Direction.FORWARD);
