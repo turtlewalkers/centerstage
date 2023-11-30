@@ -73,7 +73,7 @@ public class MoveToAprilTagAutonomous extends LinearOpMode {
                 .setCameraResolution(new Size(640, 480))
                 .build();
 
-        setManualExposure(6, 250);
+        setManualExposure(6, 200);
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
