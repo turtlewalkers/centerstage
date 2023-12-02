@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousBlueFarParkRight extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1250;
+    int SLIDE_HEIGHT = -1500;
     private ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 1;
 
@@ -139,10 +139,16 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
-                .splineTo(new Vector2d(30,-2), Math.toRadians(-90))
+                .splineTo(new Vector2d(30,-1), Math.toRadians(-90))
                 .build();
-        Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
-                .back(70)
+        Trajectory goUnder3 = drivetrain.trajectoryBuilder(pixelposition3.end())
+                .lineToLinearHeading(new Pose2d(50, 3, Math.toRadians(-90)))
+                .build();
+        Trajectory backboard3 = drivetrain.trajectoryBuilder(goUnder3.end())
+                .back(65)
+                .build();
+        Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
+                .strafeRight(20)
                 .build();
 
         waitForStart();
@@ -201,13 +207,15 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
-                robot.left.setPower(0.1);
-                robot.right.setPower(-0.1);
+                robot.left.setPower(0.4);
+                robot.right.setPower(-0.4);
                 sleep(1000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
+                drivetrain.followTrajectory(goUnder3);
                 drivetrain.followTrajectory(backboard3);
+                drivetrain.followTrajectory(camera3);
             }
 
             /**
@@ -217,7 +225,7 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
             DESIRED_TAG_ID = PIXEL_POSITION;
 
             runtime.reset();
-            while (runtime.seconds() < 9) {
+            while (runtime.seconds() < 7) {
                 // initial detection
                 targetFound = false;
                 desiredTag = null;
@@ -270,8 +278,8 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
 
             // move linear slide up
             robot.linear.setPosition(0.6);
-            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.leftSlide.setTargetPosition(-1100);
+            robot.rightSlide.setTargetPosition(-1100);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
@@ -300,8 +308,31 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
             robot.boxServo.setPower(0);
 
             // move linear slide back
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftSlide.setPower(1);
+            robot.rightSlide.setPower(1);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
+            robot.leftSlide.setPower(0);
+            robot.rightSlide.setPower(0);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            sleep(1000);
+
             robot.arm.setPosition(0.44);
-            robot.linear.setPosition(0.4);
+            robot.linear.setPosition(0.47);
             robot.leftSlide.setTargetPosition(0);
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);

@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousBlueFarParkLeft extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1250;
+    int SLIDE_HEIGHT = -1500;
     private ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 1;
 
@@ -121,11 +121,17 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
 //        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
-        Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(-90)))
-                .back(21)
+        Trajectory outtake1 = drivetrain.trajectoryBuilder(detect.end())
+                .lineToLinearHeading(new Pose2d(26, 2, Math.toRadians(90)))
                 .build();
-        Trajectory backboard1 = drivetrain.trajectoryBuilder(outtake1.end())
-                .back(30)
+        Trajectory goUnder1 = drivetrain.trajectoryBuilder(new Pose2d(27, 0, Math.toRadians(90)))
+                .strafeRight(20)
+                .build();
+        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(47, 0, Math.toRadians(-90)))
+                .back(70)
+                .build();
+        Trajectory camera1 = drivetrain.trajectoryBuilder(backboard1.end())
+                .strafeRight(37)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -139,10 +145,16 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
-                .splineTo(new Vector2d(30,-2), Math.toRadians(-90))
+                .splineTo(new Vector2d(30,-1), Math.toRadians(-90))
                 .build();
-        Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
-                .back(70)
+        Trajectory goUnder3 = drivetrain.trajectoryBuilder(pixelposition3.end())
+                .lineToLinearHeading(new Pose2d(50, 3, Math.toRadians(-90)))
+                .build();
+        Trajectory backboard3 = drivetrain.trajectoryBuilder(goUnder3.end())
+                .back(65)
+                .build();
+        Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
+                .strafeRight(20)
                 .build();
 
         waitForStart();
@@ -171,19 +183,20 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
             telemetry.update();
 
             if (PIXEL_POSITION == 1) {
-                drivetrain.turn(Math.toRadians(-90));
                 drivetrain.followTrajectory(outtake1);
 
                 // outake
-                robot.left.setPower(0.1);
-                robot.right.setPower(-0.1);
+                robot.left.setPower(0.4);
+                robot.right.setPower(-0.4);
                 sleep(1000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
                 sleep(1000);
 
+                drivetrain.followTrajectory(goUnder1);
+                drivetrain.turn(Math.toRadians(180));
                 drivetrain.followTrajectory(backboard1);
-                drivetrain.turn(Math.toRadians(15));
+                drivetrain.followTrajectory(camera1);
 
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
@@ -201,13 +214,15 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
-                robot.left.setPower(0.1);
-                robot.right.setPower(-0.1);
+                robot.left.setPower(0.4);
+                robot.right.setPower(-0.4);
                 sleep(1000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
+                drivetrain.followTrajectory(goUnder3);
                 drivetrain.followTrajectory(backboard3);
+                drivetrain.followTrajectory(camera3);
             }
 
             /**
@@ -217,7 +232,7 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
             DESIRED_TAG_ID = PIXEL_POSITION;
 
             runtime.reset();
-            while (runtime.seconds() < 9) {
+            while (runtime.seconds() < 7) {
                 // initial detection
                 targetFound = false;
                 desiredTag = null;
@@ -270,8 +285,8 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
 
             // move linear slide up
             robot.linear.setPosition(0.6);
-            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.leftSlide.setTargetPosition(-1100);
+            robot.rightSlide.setTargetPosition(-1100);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
@@ -300,8 +315,31 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
             robot.boxServo.setPower(0);
 
             // move linear slide back
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftSlide.setPower(1);
+            robot.rightSlide.setPower(1);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
+            robot.leftSlide.setPower(0);
+            robot.rightSlide.setPower(0);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            sleep(1000);
+
             robot.arm.setPosition(0.44);
-            robot.linear.setPosition(0.4);
+            robot.linear.setPosition(0.47);
             robot.leftSlide.setTargetPosition(0);
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -329,6 +367,7 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
             move(-0.5, 0, 0);
             sleep(150);
             move(0, 0, 0);
+
 
             // Save more CPU resources when camera is no longer needed.
             visionPortal.close();

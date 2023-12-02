@@ -34,9 +34,9 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Autonomous
-public class AutonomousBlueCloseParkRight extends LinearOpMode {
+public class AutonomousRedCloseParkRight extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1250;
+    int SLIDE_HEIGHT = -1500;
     private ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 1;
 
@@ -50,7 +50,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
     private VisionPortal visionPortal;
 
     int DESIRED_TAG_ID = 3; // TODO: change this when needed
-    final double DESIRED_DISTANCE = 2.5;
+    final double DESIRED_DISTANCE = 4.5;
     final double SPEED_GAIN  =  0.02  ;
     final double STRAFE_GAIN =  0.015 ;
     final double TURN_GAIN   =  0.01  ;
@@ -121,11 +121,14 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
 //        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
-        Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(-90)))
+        Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(90)))
                 .back(21)
                 .build();
-        Trajectory backboard1 = drivetrain.trajectoryBuilder(outtake1.end())
-                .back(30)
+//        Trajectory backboard1 = drivetrain.trajectoryBuilder(outtake1.end())
+//                .back(0)
+//                .build();
+        Trajectory camera1 = drivetrain.trajectoryBuilder(outtake1.end())
+                .strafeLeft(6)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -134,17 +137,22 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
         Trajectory goback2 = drivetrain.trajectoryBuilder(detect.end())
                 .back(6)
                 .build();
-        Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(-90)))
+        Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(90)))
                 .back(20)
+                .build();
+        Trajectory camera2 = drivetrain.trajectoryBuilder(backboard2.end())
+                .strafeRight(5)
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
-                .splineTo(new Vector2d(30,-4), Math.toRadians(-90))
+                .splineTo(new Vector2d(30,4), Math.toRadians(90))
                 .build();
-        Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
+        Trajectory backboard3 = drivetrain.trajectoryBuilder(pixelposition3.end())
                 .back(20)
                 .build();
-
+        Trajectory camera3 = drivetrain.trajectoryBuilder(backboard2.end())
+                .strafeRight(10)
+                .build();
         waitForStart();
 
 
@@ -152,7 +160,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
             /**
              * Pixel detection
              */
-
+            robot.linear.setPosition(0.47);
             drivetrain.followTrajectory(detect);
 
             if (middleDistance.getDistance(DistanceUnit.METER) <= 0.2) {
@@ -162,7 +170,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
             } else {
                 PIXEL_POSITION = 3;
             }
-            sleep(2500);
+            sleep(1000);
             telemetry.addData("left", leftDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("right", rightDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("middle", middleDistance.getDistance(DistanceUnit.METER));
@@ -170,20 +178,20 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
             // Push telemetry to the Driver Station.
             telemetry.update();
 
-            if (PIXEL_POSITION == 1) {
-                drivetrain.turn(Math.toRadians(-90));
+            if (PIXEL_POSITION == 3) {
+                drivetrain.turn(Math.toRadians(90));
                 drivetrain.followTrajectory(outtake1);
 
                 // outake
-                robot.left.setPower(0.4);
-                robot.right.setPower(-0.4);
-                sleep(1000);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
+                sleep(2000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
                 sleep(1000);
 
-//                drivetrain.followTrajectory(backboard1);
-                drivetrain.turn(Math.toRadians(15));
+                drivetrain.followTrajectory(camera1);
+//                drivetrain.turn(Math.toRadians(15));
 
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
@@ -194,30 +202,31 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(goback2);
-                drivetrain.turn(Math.toRadians(-95));
+                drivetrain.turn(Math.toRadians(95));
                 drivetrain.followTrajectory(backboard2);
-
+                drivetrain.followTrajectory(camera2);
             } else {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
-                robot.left.setPower(0.4);
-                robot.right.setPower(-0.4);
-                sleep(1000);
+                robot.left.setPower(1);
+                robot.right.setPower(-1);
+                sleep(2500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(backboard3);
+                drivetrain.followTrajectory(camera3);
             }
 
             /**
              * April Tag
              */
 
-            DESIRED_TAG_ID = PIXEL_POSITION;
+            DESIRED_TAG_ID = PIXEL_POSITION + 3;
 
             runtime.reset();
-            while (runtime.seconds() < 9) {
+            while (runtime.seconds() < 7) {
                 // initial detection
                 targetFound = false;
                 desiredTag = null;
@@ -268,7 +277,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
             sleep(400);
             move(0, 0, 0);
 
-            // move linear slide back
+            // move linear slide up
             robot.linear.setPosition(0.6);
             robot.leftSlide.setTargetPosition(-1100);
             robot.rightSlide.setTargetPosition(-1100);
@@ -348,7 +357,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             move(0, 0.5, 0);
-            sleep(500 + 500 * (3 - DESIRED_TAG_ID));
+            sleep(1000 + 500 * (3 - DESIRED_TAG_ID));
             move(-0.5, 0, 0);
             sleep(150);
             move(0, 0, 0);
