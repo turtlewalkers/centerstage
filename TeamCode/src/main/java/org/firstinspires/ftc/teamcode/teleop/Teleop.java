@@ -89,29 +89,34 @@ public class Teleop extends LinearOpMode {
             drive.update();
 
             // intake
-            int intakePower = 0;
+            double intakePower = 0;
             if (gamepad2.a) {
                 intakePower = -1;
-                robot.linear.setPosition(LINEAR_SERVO_POSITION); // 0.57
+                robot.linear.setPosition(LINEAR_SERVO_POSITION); // 0.5
                 robot.arm.setPosition(0.44);
                 if (gamepad2.left_trigger != 0) {
-                    intakePower = 1;
+                    intakePower = 0.3;
                 }
             } else if (gamepad2.dpad_up) {
                 robot.linear.setPosition(0);
             } else if (gamepad2.dpad_right) {
                 robot.linear.setPosition(1);
             } else if (gamepad2.dpad_left || gamepad1.dpad_left){
-                robot.arm.setPosition(0.42);
-                robot.linear.setPosition(LINEAR_SERVO_POSITION-0.04); // 0.47
-            }
-            robot.left.setPower(intakePower);
-            robot.right.setPower(-intakePower);
-            robot.middle.setPower(intakePower);
+                robot.arm.setPosition(0.44);
+            robot.linear.setPosition(LINEAR_SERVO_POSITION);
+        }
+        robot.left.setPower(intakePower);
+        robot.right.setPower(-intakePower);
+        robot.middle.setPower(-intakePower);
+        robot.rolltop.setPower(intakePower);
+        if (intakePower != 0.3) {
             robot.boxServo.setPower(intakePower);
+        } else {
+            robot.boxServo.setPower(0);
+        }
 
-            // slides
-            if (gamepad1.dpad_down) {
+        // slides
+        if (gamepad1.dpad_down) {
                 robot.leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
@@ -153,7 +158,7 @@ public class Teleop extends LinearOpMode {
             else if (gamepad2.y) {
                 robot.arm.setPosition(0.2);
             } else if (gamepad2.right_bumper) {
-                robot.arm.setPosition(0.42);
+                robot.arm.setPosition(0.44);
             }
 
             if (gamepad2.b) {

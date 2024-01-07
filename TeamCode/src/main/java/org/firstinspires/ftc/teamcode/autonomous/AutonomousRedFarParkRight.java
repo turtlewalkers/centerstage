@@ -127,11 +127,11 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
         Trajectory goUnder1 = drivetrain.trajectoryBuilder(new Pose2d(27, 3, Math.toRadians(-90)))
                 .strafeLeft(21)
                 .build();
-        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(48, 3, Math.toRadians(90)))
+        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(6, 3, Math.toRadians(90)))
                 .back(70)
                 .build();
         Trajectory camera1 = drivetrain.trajectoryBuilder(backboard1.end())
-                .strafeLeft(20)
+                .strafeRight(10)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -144,20 +144,23 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 .back(60)
                 .build();
         Trajectory camera2 = drivetrain.trajectoryBuilder(backboard2.end())
-                .strafeLeft(2)
+                .strafeRight(4)
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
                 .splineTo(new Vector2d(26,2), Math.toRadians(90))
                 .build();
         Trajectory goUnder3 = drivetrain.trajectoryBuilder(pixelposition3.end())
-                .lineToLinearHeading(new Pose2d(48, 2, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(1, 2, Math.toRadians(90)))
                 .build();
         Trajectory backboard3 = drivetrain.trajectoryBuilder(goUnder3.end())
                 .back(70)
                 .build();
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .strafeLeft(12)
+                .strafeRight(20)
+                .build();
+        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(2, -70, Math.toRadians(90)))
+                .back(20)
                 .build();
         waitForStart();
 
@@ -198,13 +201,14 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 drivetrain.followTrajectory(goUnder1);
                 drivetrain.turn(Math.toRadians(180));
                 drivetrain.followTrajectory(backboard1);
-                drivetrain.followTrajectory(camera1);
+                sleep(2000);
+//                drivetrain.followTrajectory(camera1);
 //                drivetrain.turn(Math.toRadians(15));
 
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
-                robot.left.setPower(1);
-                robot.right.setPower(-1);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
                 sleep(2500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
@@ -212,30 +216,31 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 drivetrain.followTrajectory(goback2);
                 drivetrain.turn(Math.toRadians(95));
                 drivetrain.followTrajectory(backboard2);
-                drivetrain.followTrajectory(camera2);
+//                drivetrain.followTrajectory(camera2);
             } else {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
-                robot.left.setPower(1);
-                robot.right.setPower(-1);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
                 sleep(2500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(goUnder3);
                 drivetrain.followTrajectory(backboard3);
+                sleep(2000);
                 drivetrain.followTrajectory(camera3);
             }
 
             /**
              * April Tag
              */
-
-            DESIRED_TAG_ID = PIXEL_POSITION + 3;
+ // TODO: uncomment this
+//            DESIRED_TAG_ID = PIXEL_POSITION + 3;
 
             runtime.reset();
-            while (runtime.seconds() < 7) {
+            while (runtime.seconds() < 5) {
                 // initial detection
                 targetFound = false;
                 desiredTag = null;
@@ -283,7 +288,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
 
             // strafe right a little bit
             move(0, 0.5, 0);
-            sleep(400);
+            sleep(200);
             move(0, 0, 0);
 
             // move linear slide up
@@ -365,11 +370,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            move(0, 0.5, 0);
-            sleep(500 + 500L * (3 - DESIRED_TAG_ID));
-            move(-0.5, 0, 0);
-            sleep(150);
-            move(0, 0, 0);
+            drivetrain.followTrajectory(park);
 
             // Save more CPU resources when camera is no longer needed.
             visionPortal.close();
