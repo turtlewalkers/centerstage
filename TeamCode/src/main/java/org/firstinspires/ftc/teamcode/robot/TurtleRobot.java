@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class TurtleRobot {
@@ -25,8 +26,10 @@ public class TurtleRobot {
     public CRServo middle = null;
     public Servo arm = null;
     public Servo linear = null;
+    public CRServo rolltop = null;
     public CRServo plane = null;
     public CRServo boxServo = null;
+    TouchSensor touch;
     /* local OpMode members. */
     HardwareMap hwMap = null;
     public ElapsedTime period = new ElapsedTime();
@@ -51,10 +54,12 @@ public class TurtleRobot {
         left = hwMap.get(CRServo.class, "left");
         right = hwMap.get(CRServo.class, "right");
         middle = hwMap.get(CRServo.class, "middle");
+        rolltop = hwMap.get(CRServo.class, "rolltop");
         arm = hwMap.get(Servo.class, "arm");
         linear = hwMap.get(Servo.class, "linear");
         plane = hwMap.get(CRServo.class, "plane");
         boxServo = hwMap.get(CRServo.class, "boxServo");
+        touch = hwMap.get(TouchSensor.class, "touch");
 
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftBack.setDirection(DcMotorEx.Direction.REVERSE);

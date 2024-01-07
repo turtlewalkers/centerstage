@@ -159,6 +159,9 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
                 .strafeLeft(12)
                 .build();
+        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(50, -75, Math.toRadians(90)))
+                .back(15)
+                .build();
         waitForStart();
 
 
@@ -203,8 +206,8 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
 
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
-                robot.left.setPower(1);
-                robot.right.setPower(-1);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
                 sleep(2500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
@@ -212,7 +215,7 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
                 drivetrain.followTrajectory(goback2);
                 drivetrain.turn(Math.toRadians(95));
                 drivetrain.followTrajectory(backboard2);
-                drivetrain.followTrajectory(camera2);
+//                drivetrain.followTrajectory(camera2);
             } else {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
@@ -231,7 +234,6 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             /**
              * April Tag
              */
-
             DESIRED_TAG_ID = PIXEL_POSITION + 3;
 
             runtime.reset();
@@ -282,8 +284,8 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             }
 
             // strafe right a little bit
-            move(0, 0.5, 0);
-            sleep(400);
+            move(0, -0.5, 0);
+            sleep(200);
             move(0, 0, 0);
 
             // move linear slide up
@@ -365,12 +367,7 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            move(0, -0.5, 0);
-            sleep(100 + 500 * DESIRED_TAG_ID);
-            move(-0.5, 0, 0);
-            sleep(150);
-            move(0, 0, 0);
-
+            drivetrain.followTrajectory(park);
 
             // Save more CPU resources when camera is no longer needed.
             visionPortal.close();

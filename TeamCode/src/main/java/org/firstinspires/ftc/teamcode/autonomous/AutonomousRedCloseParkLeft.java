@@ -153,6 +153,10 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard2.end())
                 .strafeRight(10)
                 .build();
+        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(50, -25, Math.toRadians(90)))
+                .back(15)
+                .build();
+
         waitForStart();
 
 
@@ -195,8 +199,8 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
 
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
-                robot.left.setPower(1);
-                robot.right.setPower(-1);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
                 sleep(2500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
@@ -273,8 +277,8 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
             }
 
             // strafe right a little bit
-            move(0, 0.5, 0);
-            sleep(400);
+            move(0, -0.5, 0);
+            sleep(200);
             move(0, 0, 0);
 
             // move linear slide up
@@ -356,11 +360,7 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            move(0, -0.5, 0);
-            sleep(100 + 500 * DESIRED_TAG_ID);
-            move(-0.5, 0, 0);
-            sleep(150);
-            move(0, 0, 0);
+            drivetrain.followTrajectory(park);
 
 
             // Save more CPU resources when camera is no longer needed.
