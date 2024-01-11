@@ -148,10 +148,10 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
-                .splineTo(new Vector2d(26,2), Math.toRadians(90))
+                .splineTo(new Vector2d(28,2), Math.toRadians(90))
                 .build();
         Trajectory goUnder3 = drivetrain.trajectoryBuilder(pixelposition3.end())
-                .lineToLinearHeading(new Pose2d(48, 2, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(49, 2, Math.toRadians(90)))
                 .build();
         Trajectory backboard3 = drivetrain.trajectoryBuilder(goUnder3.end())
                 .back(70)
@@ -160,7 +160,7 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
                 .strafeLeft(12)
                 .build();
         Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(50, -75, Math.toRadians(90)))
-                .back(15)
+                .back(10)
                 .build();
         waitForStart();
 
@@ -220,8 +220,8 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
-                robot.left.setPower(1);
-                robot.right.setPower(-1);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
                 sleep(2500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
@@ -234,7 +234,8 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             /**
              * April Tag
              */
-            DESIRED_TAG_ID = PIXEL_POSITION + 3;
+            DESIRED_TAG_ID = PIXEL_POSITION;
+            DESIRED_TAG_ID += 3;
 
             runtime.reset();
             while (runtime.seconds() < 7) {
@@ -284,7 +285,7 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             }
 
             // strafe right a little bit
-            move(0, -0.5, 0);
+            move(0, 0.5, 0);
             sleep(200);
             move(0, 0, 0);
 

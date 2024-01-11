@@ -122,16 +122,16 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(detect.end())
-                .lineToLinearHeading(new Pose2d(27, -2, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(28, -2, Math.toRadians(-90)))
                 .build();
         Trajectory goUnder1 = drivetrain.trajectoryBuilder(new Pose2d(27, 3, Math.toRadians(-90)))
-                .strafeLeft(21)
+                .strafeRight(21)
                 .build();
-        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(6, 3, Math.toRadians(90)))
+        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(4, 3, Math.toRadians(90)))
                 .back(70)
                 .build();
         Trajectory camera1 = drivetrain.trajectoryBuilder(backboard1.end())
-                .strafeRight(10)
+                .strafeRight(25)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -148,19 +148,19 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
-                .splineTo(new Vector2d(26,2), Math.toRadians(90))
+                .splineTo(new Vector2d(28,2), Math.toRadians(90))
                 .build();
-        Trajectory goUnder3 = drivetrain.trajectoryBuilder(pixelposition3.end())
+        Trajectory goUnder3 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(90)))
                 .lineToLinearHeading(new Pose2d(1, 2, Math.toRadians(90)))
                 .build();
         Trajectory backboard3 = drivetrain.trajectoryBuilder(goUnder3.end())
                 .back(70)
                 .build();
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .strafeRight(20)
+                .strafeRight(31)
                 .build();
-        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(2, -70, Math.toRadians(90)))
-                .back(20)
+        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(2, -75, Math.toRadians(90)))
+                .back(1)
                 .build();
         waitForStart();
 
@@ -202,7 +202,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 drivetrain.turn(Math.toRadians(180));
                 drivetrain.followTrajectory(backboard1);
                 sleep(2000);
-//                drivetrain.followTrajectory(camera1);
+                drivetrain.followTrajectory(camera1);
 //                drivetrain.turn(Math.toRadians(15));
 
             } else if (PIXEL_POSITION == 2) {
@@ -236,8 +236,8 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
             /**
              * April Tag
              */
- // TODO: uncomment this
-//            DESIRED_TAG_ID = PIXEL_POSITION + 3;
+            DESIRED_TAG_ID = PIXEL_POSITION;
+            DESIRED_TAG_ID += 3;
 
             runtime.reset();
             while (runtime.seconds() < 5) {

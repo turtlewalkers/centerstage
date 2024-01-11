@@ -122,16 +122,16 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(detect.end())
-                .lineToLinearHeading(new Pose2d(26, 2, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(28, 4, Math.toRadians(90)))
                 .build();
         Trajectory goUnder1 = drivetrain.trajectoryBuilder(new Pose2d(27, 0, Math.toRadians(90)))
-                .strafeRight(20)
+                .strafeLeft(23)
                 .build();
-        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(47, 0, Math.toRadians(-90)))
+        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(3, 0, Math.toRadians(-90)))
                 .back(70)
                 .build();
         Trajectory camera1 = drivetrain.trajectoryBuilder(backboard1.end())
-                .strafeRight(37)
+                .strafeLeft(13)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -148,13 +148,16 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
                 .splineTo(new Vector2d(30,-1), Math.toRadians(-90))
                 .build();
         Trajectory goUnder3 = drivetrain.trajectoryBuilder(pixelposition3.end())
-                .lineToLinearHeading(new Pose2d(50, 3, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(3, 3, Math.toRadians(-90)))
                 .build();
-        Trajectory backboard3 = drivetrain.trajectoryBuilder(goUnder3.end())
+        Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(3, 3, Math.toRadians(-90)))
                 .back(65)
                 .build();
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .strafeRight(20)
+                .strafeLeft(25)
+                .build();
+        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(3, 70, Math.toRadians(-90)))
+                .back(15)
                 .build();
 
         waitForStart();
@@ -186,9 +189,9 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
                 drivetrain.followTrajectory(outtake1);
 
                 // outake
-                robot.left.setPower(0.4);
-                robot.right.setPower(-0.4);
-                sleep(1000);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
+                sleep(2000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
                 sleep(1000);
@@ -200,9 +203,9 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
 
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
-                robot.left.setPower(1);
-                robot.right.setPower(-1);
-                sleep(2500);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
+                sleep(2000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
@@ -214,9 +217,9 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
-                robot.left.setPower(0.4);
-                robot.right.setPower(-0.4);
-                sleep(1000);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
+                sleep(2000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
@@ -280,7 +283,7 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
 
             // strafe right a little bit
             move(0, 0.5, 0);
-            sleep(400);
+            sleep(200);
             move(0, 0, 0);
 
             // move linear slide up
@@ -362,12 +365,7 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            move(0, -0.5, 0);
-            sleep(1000 + 500 * (3 - DESIRED_TAG_ID));
-            move(-0.5, 0, 0);
-            sleep(150);
-            move(0, 0, 0);
-
+            drivetrain.followTrajectory(park);
 
             // Save more CPU resources when camera is no longer needed.
             visionPortal.close();
