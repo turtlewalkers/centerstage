@@ -128,7 +128,7 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
 //                .back(0)
 //                .build();
         Trajectory camera1 = drivetrain.trajectoryBuilder(outtake1.end())
-                .strafeLeft(6)
+                .strafeLeft(5)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -213,8 +213,8 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
-                robot.left.setPower(1);
-                robot.right.setPower(-1);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
                 sleep(2500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
@@ -226,8 +226,8 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
             /**
              * April Tag
              */
-
-            DESIRED_TAG_ID = PIXEL_POSITION + 3;
+            DESIRED_TAG_ID = PIXEL_POSITION;
+            DESIRED_TAG_ID += 3;
 
             runtime.reset();
             while (runtime.seconds() < 7) {
@@ -276,8 +276,8 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
                 sleep(20);
             }
 
-            // strafe right a little bit
-            move(0, -0.5, 0);
+//             strafe right a little bit
+            move(0, 0.5, 0);
             sleep(200);
             move(0, 0, 0);
 

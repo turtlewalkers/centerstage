@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousBlueCloseParkLeft extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1250;
+    int SLIDE_HEIGHT = -1500;
     private ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 1;
 
@@ -121,11 +121,11 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
 //        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
-        Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(-90)))
+        Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(-90)))
                 .back(21)
                 .build();
         Trajectory backboard1 = drivetrain.trajectoryBuilder(outtake1.end())
-                .back(30)
+                .strafeRight(12)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -143,6 +143,12 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .build();
         Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
                 .back(20)
+                .build();
+        Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
+                .strafeLeft(5)
+                .build();
+        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(6, 25, Math.toRadians(-90)))
+                .back(15)
                 .build();
 
         waitForStart();
@@ -175,21 +181,21 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 drivetrain.followTrajectory(outtake1);
 
                 // outake
-                robot.left.setPower(0.4);
-                robot.right.setPower(-0.4);
-                sleep(1000);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
+                sleep(2000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
                 sleep(1000);
 
-//                drivetrain.followTrajectory(backboard1);
-                drivetrain.turn(Math.toRadians(15));
+                drivetrain.followTrajectory(backboard1);
+//                drivetrain.turn(Math.toRadians(15));
 
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
-                robot.left.setPower(1);
-                robot.right.setPower(-1);
-                sleep(2500);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
+                sleep(2000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
@@ -201,13 +207,14 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
-                robot.left.setPower(0.4);
-                robot.right.setPower(-0.4);
-                sleep(1000);
+                robot.left.setPower(0.1);
+                robot.right.setPower(-0.1);
+                sleep(2000);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(backboard3);
+                drivetrain.followTrajectory(camera3);
             }
 
             /**
@@ -265,7 +272,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
 
             // strafe right a little bit
             move(0, 0.5, 0);
-            sleep(400);
+            sleep(200);
             move(0, 0, 0);
 
             // move linear slide back
@@ -347,11 +354,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            move(0, -0.5, 0);
-            sleep(1000 + 500 * (3 - DESIRED_TAG_ID));
-            move(-0.5, 0, 0);
-            sleep(150);
-            move(0, 0, 0);
+            drivetrain.followTrajectory(park);
 
             // Save more CPU resources when camera is no longer needed.
             visionPortal.close();
