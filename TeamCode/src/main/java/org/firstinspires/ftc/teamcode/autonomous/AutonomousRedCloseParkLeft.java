@@ -14,6 +14,9 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
@@ -50,7 +53,7 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
     private VisionPortal visionPortal;
 
     int DESIRED_TAG_ID = 3; // TODO: change this when needed
-    final double DESIRED_DISTANCE = 4.5;
+    final double DESIRED_DISTANCE = 2.2;
     final double SPEED_GAIN  =  0.02  ;
     final double STRAFE_GAIN =  0.015 ;
     final double TURN_GAIN   =  0.01  ;
@@ -306,7 +309,7 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(0.15);
+            robot.arm.setPosition(ARM_SERVO_Y);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);
@@ -336,7 +339,7 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             sleep(1000);
 
-            robot.arm.setPosition(0.44);
+            robot.arm.setPosition(ARM_SERVO_POSITION);
             robot.linear.setPosition(0.47);
             robot.leftSlide.setTargetPosition(0);
             robot.rightSlide.setTargetPosition(0);
