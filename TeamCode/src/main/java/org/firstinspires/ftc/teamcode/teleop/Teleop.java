@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.LINEAR_SERVO_POSITION;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -80,20 +83,28 @@ public class Teleop extends LinearOpMode {
 
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
+                            -Math.cbrt(Math.cbrt(gamepad1.left_stick_y)),
+                            -Math.cbrt(Math.cbrt(gamepad1.left_stick_x)),
+                            -Math.cbrt(gamepad1.right_stick_x/4)
                     )
             );
 
+            if (gamepad1.a) {
+                drive.setWeightedDrivePower(
+                        new Pose2d(
+                        -Math.cbrt(Math.cbrt(gamepad1.left_stick_y))/10,
+                        -Math.cbrt(Math.cbrt(gamepad1.left_stick_x))/10,
+                        -Math.cbrt(gamepad1.right_stick_x/4)/10
+                        ));
+            }
             drive.update();
-
+            
             // intake
             double intakePower = 0;
             if (gamepad2.a) {
                 intakePower = -1;
                 robot.linear.setPosition(LINEAR_SERVO_POSITION); // 0.5
-                robot.arm.setPosition(0.44);
+                robot.arm.setPosition(ARM_SERVO_POSITION);
                 if (gamepad2.left_trigger != 0) {
                     intakePower = 0.3;
                 }
@@ -102,7 +113,7 @@ public class Teleop extends LinearOpMode {
             } else if (gamepad2.dpad_right) {
                 robot.linear.setPosition(1);
             } else if (gamepad2.dpad_left || gamepad1.dpad_left){
-                robot.arm.setPosition(0.44);
+                robot.arm.setPosition(ARM_SERVO_POSITION);
             robot.linear.setPosition(LINEAR_SERVO_POSITION);
         }
         robot.left.setPower(intakePower);
@@ -124,7 +135,7 @@ public class Teleop extends LinearOpMode {
                 telemetry.addLine("reset to 0");
                 telemetry.update();
             }
-            if (gamepad1.right_bumper) {
+            if (gamepad1.right_trigger != 0) {
 //                robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //                robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 SLIDE_HEIGHT = -2000;
@@ -139,7 +150,7 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.left_bumper) {
 //                robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //                robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.arm.setPosition(0.44);
+                robot.arm.setPosition(ARM_SERVO_POSITION);
                 robot.linear.setPosition(LINEAR_SERVO_POSITION);
                 int ZERO_SLIDE_HEIGHT = 0;
                 robot.leftSlide.setTargetPosition(ZERO_SLIDE_HEIGHT);
@@ -153,16 +164,31 @@ public class Teleop extends LinearOpMode {
 
             // box
             if (gamepad2.x) {
-                robot.arm.setPosition(0);
+                robot.arm.setPosition(ARM_SERVO_X);
             }
             else if (gamepad2.y) {
-                robot.arm.setPosition(0.2);
+                robot.arm.setPosition(ARM_SERVO_Y);
             } else if (gamepad2.right_bumper) {
-                robot.arm.setPosition(0.44);
+                robot.arm.setPosition(ARM_SERVO_POSITION);
             }
 
             if (gamepad2.b) {
                 robot.boxServo.setPower(1);
+            }
+            //reverse intake
+            if (gamepad1.x) {
+                robot.left.setPower(-1);
+                robot.right.setPower(-1);
+            }
+            if (gamepad1.right_bumper) {
+                SLIDE_HEIGHT = -1500;
+                robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+                robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
+                robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.leftSlide.setPower(1);
+                robot.rightSlide.setPower(1);
+                waitForLinearSlide();
             }
 //            robot.arm.setPosition(gamepad2.left_stick_y);
 
@@ -187,11 +213,12 @@ public class Teleop extends LinearOpMode {
                 telemetry.update();
                 idle();
             }
-            robot.leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-
+//            robot.leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            robot.rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            if (robot.leftSlide.getTargetPosition() == 0) {
+                robot.leftSlide.setPower(0);
+                robot.rightSlide.setPower(0);
+            }
         }).start();
 
 
