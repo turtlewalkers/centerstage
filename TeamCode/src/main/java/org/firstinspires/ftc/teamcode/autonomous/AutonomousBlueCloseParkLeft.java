@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -124,10 +125,10 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
 //        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
-        Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(-90)))
-                .back(21)
+        Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(28, 21, Math.toRadians(-90)))
                 .build();
-        Trajectory backboard1 = drivetrain.trajectoryBuilder(outtake1.end())
+        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(28, 23, Math.toRadians(-90)))
                 .strafeRight(12)
                 .build();
 
@@ -180,7 +181,6 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
             telemetry.update();
 
             if (PIXEL_POSITION == 1) {
-                drivetrain.turn(Math.toRadians(-90));
                 drivetrain.followTrajectory(outtake1);
 
                 // outake
@@ -280,8 +280,8 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
 
             // move linear slide back
             robot.linear.setPosition(0.6);
-            robot.leftSlide.setTargetPosition(-1100);
-            robot.rightSlide.setTargetPosition(-1100);
+            robot.leftSlide.setTargetPosition(-1000);
+            robot.rightSlide.setTargetPosition(-1000);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
@@ -303,7 +303,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_Y);
+            robot.arm.setPosition(ARM_SERVO_X);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);
