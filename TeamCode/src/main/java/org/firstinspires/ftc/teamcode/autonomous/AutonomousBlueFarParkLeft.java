@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_TIME;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -54,7 +55,7 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
     private VisionPortal visionPortal;
 
     int DESIRED_TAG_ID = 4; // TODO: change this when needed
-    final double DESIRED_DISTANCE = 4;
+    final double DESIRED_DISTANCE = 2.5;
     final double SPEED_GAIN  =  0.02  ;
     final double STRAFE_GAIN =  0.015 ;
     final double TURN_GAIN   =  0.01  ;
@@ -291,9 +292,8 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
             move(0, 0, 0);
 
             // move linear slide up
-            robot.linear.setPosition(0.6);
-            robot.leftSlide.setTargetPosition(-1100);
-            robot.rightSlide.setTargetPosition(-1100);
+            robot.leftSlide.setTargetPosition(-1000);
+            robot.rightSlide.setTargetPosition(-1000);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
@@ -315,7 +315,7 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_Y);
+            robot.arm.setPosition(ARM_SERVO_X);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);
@@ -346,7 +346,6 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
             sleep(1000);
 
             robot.arm.setPosition(ARM_SERVO_POSITION);
-            robot.linear.setPosition(0.47);
             robot.leftSlide.setTargetPosition(0);
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);

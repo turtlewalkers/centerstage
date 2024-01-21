@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_TIME;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -54,7 +55,7 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
     private VisionPortal visionPortal;
 
     int DESIRED_TAG_ID = 4; // TODO: change this when needed
-    final double DESIRED_DISTANCE = 4;
+    final double DESIRED_DISTANCE = 2.5;
     final double SPEED_GAIN  =  0.02  ;
     final double STRAFE_GAIN =  0.015 ;
     final double TURN_GAIN   =  0.01  ;
@@ -129,13 +130,13 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(28, 4, Math.toRadians(90)))
                 .build();
         Trajectory goUnder1 = drivetrain.trajectoryBuilder(new Pose2d(27, 0, Math.toRadians(90)))
-                .strafeLeft(23)
+                .strafeRight(23)
                 .build();
-        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(3, 0, Math.toRadians(-90)))
+        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(51, 0, Math.toRadians(-90)))
                 .back(70)
                 .build();
         Trajectory camera1 = drivetrain.trajectoryBuilder(backboard1.end())
-                .strafeLeft(13)
+                .strafeRight(40)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -152,13 +153,13 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
                 .splineTo(new Vector2d(30,-1), Math.toRadians(-90))
                 .build();
         Trajectory goUnder3 = drivetrain.trajectoryBuilder(pixelposition3.end())
-                .lineToLinearHeading(new Pose2d(3, 3, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(51, 3, Math.toRadians(-90)))
                 .build();
-        Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(2, 3, Math.toRadians(-90)))
+        Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(51, 3, Math.toRadians(-90)))
                 .back(65)
                 .build();
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .strafeLeft(25)
+                .strafeRight(25)
                 .build();
         Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(50, 70, Math.toRadians(-90)))
                 .back(15)
@@ -291,9 +292,8 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
             move(0, 0, 0);
 
             // move linear slide up
-            robot.linear.setPosition(0.6);
-            robot.leftSlide.setTargetPosition(-1100);
-            robot.rightSlide.setTargetPosition(-1100);
+            robot.leftSlide.setTargetPosition(-1000);
+            robot.rightSlide.setTargetPosition(-1000);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
@@ -315,7 +315,7 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_Y);
+            robot.arm.setPosition(ARM_SERVO_X);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);

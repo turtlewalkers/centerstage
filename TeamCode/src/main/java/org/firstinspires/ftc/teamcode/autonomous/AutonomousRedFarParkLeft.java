@@ -173,7 +173,6 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
              * Pixel detection
              */
             sleep(4000);
-            robot.linear.setPosition(0.47);
             drivetrain.followTrajectory(detect);
 
             if (middleDistance.getDistance(DistanceUnit.METER) <= 0.2) {
@@ -294,7 +293,6 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             move(0, 0, 0);
 
             // move linear slide up
-            robot.linear.setPosition(0.6);
             robot.leftSlide.setTargetPosition(-1100);
             robot.rightSlide.setTargetPosition(-1100);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -349,7 +347,6 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             sleep(1000);
 
             robot.arm.setPosition(ARM_SERVO_POSITION);
-            robot.linear.setPosition(0.47);
             robot.leftSlide.setTargetPosition(0);
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
