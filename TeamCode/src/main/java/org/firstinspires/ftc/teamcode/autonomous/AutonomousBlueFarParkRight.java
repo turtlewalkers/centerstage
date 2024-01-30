@@ -315,7 +315,7 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_X);
+            robot.arm.setPosition(ARM_SERVO_Y);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);

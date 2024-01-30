@@ -126,10 +126,10 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(28, 21, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30, 23, Math.toRadians(-90)))
                 .build();
         Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(28, 23, Math.toRadians(-90)))
-                .strafeRight(12)
+                .strafeRight(14)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -149,7 +149,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
                 .back(30)
                 .build();
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .strafeLeft(2)
+                .strafeLeft(5)
                 .build();
         Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(50, 25, Math.toRadians(-90)))
                 .back(15)
@@ -217,7 +217,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(backboard3);
-                drivetrain.followTrajectory(camera3);
+//                drivetrain.followTrajectory(camera3);
             }
 
             /**
@@ -297,13 +297,9 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
                 telemetry.update();
                 idle();
             }
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_X);
+            robot.arm.setPosition(ARM_SERVO_Y);
             sleep(2000);
             robot.boxServo.setPower(1);
             sleep(2000);
