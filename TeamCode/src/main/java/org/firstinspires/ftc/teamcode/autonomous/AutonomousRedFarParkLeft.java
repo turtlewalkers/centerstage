@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -107,7 +108,7 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
                 .build();
 
         // TODO: We might want to change this
-        setManualExposure(6, 200);
+        setManualExposure(2, 0);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -134,20 +135,20 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
                 .back(74)
                 .build();
         Trajectory camera1 = drivetrain.trajectoryBuilder(backboard1.end())
-                .strafeLeft(22)
+                .strafeLeft(26)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
 //                .forward(25)
 //                .build();
         Trajectory goback2 = drivetrain.trajectoryBuilder(detect.end())
-                .back(6)
+                .back(3)
                 .build();
         Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(90)))
-                .back(60)
+                .back(50)
                 .build();
         Trajectory camera2 = drivetrain.trajectoryBuilder(backboard2.end())
-                .strafeRight(2)
+                .strafeRight(7)
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
@@ -172,7 +173,6 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             /**
              * Pixel detection
              */
-            sleep(4000);
             drivetrain.followTrajectory(detect);
 
             if (middleDistance.getDistance(DistanceUnit.METER) <= 0.2) {
@@ -241,7 +241,7 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             DESIRED_TAG_ID += 3;
 
             runtime.reset();
-            while (runtime.seconds() < 4) {
+            while (runtime.seconds() < 7) {
                 // initial detection
                 targetFound = false;
                 desiredTag = null;
@@ -316,7 +316,7 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_Y);
+            robot.arm.setPosition(ARM_SERVO_X);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);

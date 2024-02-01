@@ -15,27 +15,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleTankDrive;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 
-/*
- standard driving
- gamepad2 a for intake
- - move 4 servos
- - makes boxservo keep on moving
- - moves linear servo so box goes down
- gamepad 2 x makes arm go up
- gamepad 2 y makes arm go down
- gamepad 2 left bumper makes the plane fly
- gamepad 2 b for dropping pixel
-
- gamepad 2 dpad left regular height
- gamepad 2 dpad right dropping height
-
- gamepad1 a is to reset slides
- gamepad1 right bumper is move slides up a little
- gamepad1 left bumper is move slides all the way down
-  - moves arm down
-*/
-
-
 @TeleOp
 public class Teleop extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
@@ -103,11 +82,11 @@ public class Teleop extends LinearOpMode {
 
             // intake
             double intakePower = 0;
-            if (gamepad2.a) {
+            if (gamepad1.right_bumper) {
                 intakePower = -1;
                 robot.linear.setPosition(LINEAR_SERVO_POSITION); // 0.5
                 robot.arm.setPosition(ARM_SERVO_POSITION);
-                if (gamepad2.left_trigger != 0) {
+                if (gamepad1.a) {
                     intakePower = 0.3;
                 }
             } else if (gamepad2.dpad_up) {
@@ -129,7 +108,7 @@ public class Teleop extends LinearOpMode {
             }
 
             // slides
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_down) {
                 robot.leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
@@ -137,7 +116,7 @@ public class Teleop extends LinearOpMode {
                 telemetry.addLine("reset to 0");
                 telemetry.update();
             }
-            if (gamepad1.right_trigger != 0) {
+            if (gamepad2.right_trigger != 0) {
 //                robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //                robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 linearSlideTargetHeight = -2000;
@@ -150,7 +129,7 @@ public class Teleop extends LinearOpMode {
                 robot.rightSlide.setPower(1);
                 waitForLinearSlide(linearSlideTargetHeight);
             }
-            if (gamepad1.left_bumper) {
+            if (gamepad2.left_bumper && robot.leftSlide.getCurrentPosition() <= 950) {
 //                robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //                robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.arm.setPosition(ARM_SERVO_POSITION);
@@ -171,19 +150,19 @@ public class Teleop extends LinearOpMode {
                 robot.arm.setPosition(ARM_SERVO_X);
             } else if (gamepad2.y) {
                 robot.arm.setPosition(ARM_SERVO_Y);
-            } else if (gamepad2.right_bumper) {
+            } else if (gamepad2.a) {
                 robot.arm.setPosition(ARM_SERVO_POSITION);
             }
 
-            if (gamepad2.b) {
+            if (gamepad2.b || gamepad1.b) {
                 robot.boxServo.setPower(1);
             }
             //front intake
-            if (gamepad2.right_trigger != 0) {
+            if (gamepad1.right_trigger != 0) {
                 robot.left.setPower(-1);
                 robot.right.setPower(1);
             }
-            if (gamepad1.right_bumper) {
+            if (gamepad2.right_bumper) {
                 SLIDE_HEIGHT = -1300;
                 linearSlideTargetHeight = -1300;
                 robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
@@ -218,7 +197,7 @@ public class Teleop extends LinearOpMode {
 
             // plane
             int planePower = 0;
-            if (gamepad2.left_bumper) {
+            if (gamepad1.left_bumper) {
                 robot.leftSlide.setPower(0);
                 robot.rightSlide.setPower(0);
                 sleep(100);

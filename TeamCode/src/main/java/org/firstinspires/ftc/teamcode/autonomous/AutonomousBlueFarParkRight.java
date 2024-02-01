@@ -292,8 +292,8 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
             move(0, 0, 0);
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1000);
-            robot.rightSlide.setTargetPosition(-1000);
+            robot.leftSlide.setTargetPosition(-1100);
+            robot.rightSlide.setTargetPosition(-1100);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
@@ -315,7 +315,7 @@ public class AutonomousBlueFarParkRight extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_Y);
+            robot.arm.setPosition(ARM_SERVO_X);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);

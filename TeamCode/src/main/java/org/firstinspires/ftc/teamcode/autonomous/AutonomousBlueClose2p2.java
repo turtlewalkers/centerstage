@@ -132,7 +132,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
 //                .strafeRight(14)
 //                .build();
         Trajectory yellow1 = drivetrain.trajectoryBuilder(outtake1.end())
-                .lineToLinearHeading(new Pose2d(21, 35.5, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(21, 36, Math.toRadians(-90)))
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -145,7 +145,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
                 .back(25)
                 .build();
         Trajectory yellow2 = drivetrain.trajectoryBuilder(new Pose2d(24, 0, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(25, 35.5, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)))
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
@@ -155,7 +155,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
                 .back(30)
                 .build();
         Trajectory yellow3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(30.5, 35.5, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30.5, 36, Math.toRadians(-90)))
                 .build();
 //        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(6, 25, Math.toRadians(-90)))
 //                .back(15)
@@ -176,7 +176,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(53, 28, Math.toRadians(-90)))
                 .build();
         Trajectory drop = drivetrain.trajectoryBuilder(bridge.end())
-                .lineToLinearHeading(new Pose2d(26, 33, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(26, 34, Math.toRadians(-90)))
                 .build();
 
 //        Trajectory drop = drivetrain.trajectoryBuilder(middle.end())
@@ -254,8 +254,8 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             }
 
             // move linear slide back
-            robot.leftSlide.setTargetPosition(-1200);
-            robot.rightSlide.setTargetPosition(-1200);
+            robot.leftSlide.setTargetPosition(-1100);
+            robot.rightSlide.setTargetPosition(-1100);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
@@ -273,7 +273,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             }
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_Y);
+            robot.arm.setPosition(ARM_SERVO_X);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(1000);
@@ -324,8 +324,8 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             robot.boxServo.setPower(0);
 
 // move linear slide back
-            robot.leftSlide.setTargetPosition(-1500);
-            robot.rightSlide.setTargetPosition(-1500);
+            robot.leftSlide.setTargetPosition(-1400);
+            robot.rightSlide.setTargetPosition(-1400);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
