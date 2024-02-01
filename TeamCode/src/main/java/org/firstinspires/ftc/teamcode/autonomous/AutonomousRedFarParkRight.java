@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -53,7 +54,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
     private VisionPortal visionPortal;
 
     int DESIRED_TAG_ID = 3; // TODO: change this when needed
-    final double DESIRED_DISTANCE = 3;
+    final double DESIRED_DISTANCE = 4;
     final double SPEED_GAIN  =  0.02  ;
     final double STRAFE_GAIN =  0.015 ;
     final double TURN_GAIN   =  0.01  ;
@@ -107,7 +108,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 .build();
 
         // TODO: We might want to change this
-        setManualExposure(6, 200);
+        setManualExposure(2, 0);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -125,7 +126,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(detect.end())
-                .lineToLinearHeading(new Pose2d(28, -2, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30, -2, Math.toRadians(-90)))
                 .build();
         Trajectory goUnder1 = drivetrain.trajectoryBuilder(new Pose2d(27, 3, Math.toRadians(-90)))
                 .strafeRight(21)
@@ -134,7 +135,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 .back(70)
                 .build();
         Trajectory camera1 = drivetrain.trajectoryBuilder(backboard1.end())
-                .strafeRight(25)
+                .strafeRight(27)
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -151,7 +152,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
-                .splineTo(new Vector2d(28,2), Math.toRadians(90))
+                .splineTo(new Vector2d(30,2), Math.toRadians(90))
                 .build();
         Trajectory goUnder3 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(90)))
                 .lineToLinearHeading(new Pose2d(1, 2, Math.toRadians(90)))
@@ -160,7 +161,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 .back(70)
                 .build();
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .strafeRight(31)
+                .strafeRight(36)
                 .build();
         Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(2, -75, Math.toRadians(90)))
                 .back(1)
@@ -239,7 +240,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
              * April Tag
              */
             DESIRED_TAG_ID = PIXEL_POSITION;
-            DESIRED_TAG_ID += 3;
+//            DESIRED_TAG_ID += 3;
 
             runtime.reset();
             while (runtime.seconds() < 5) {
@@ -317,7 +318,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_Y);
+            robot.arm.setPosition(ARM_SERVO_X);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);

@@ -122,14 +122,14 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .forward(28)
                 .build();
 
-//        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
-//                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
-//                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(0)))
                 .lineToLinearHeading(new Pose2d(30, 23, Math.toRadians(-90)))
                 .build();
-        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(28, 23, Math.toRadians(-90)))
-                .strafeRight(14)
+//        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(28, 23, Math.toRadians(-90)))
+//                .strafeRight(14)
+//                .build();
+        Trajectory yellow1 = drivetrain.trajectoryBuilder(outtake1.end())
+                .lineToLinearHeading(new Pose2d(21, 36, Math.toRadians(-90)))
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -138,8 +138,11 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
         Trajectory goback2 = drivetrain.trajectoryBuilder(detect.end())
                 .back(6)
                 .build();
-        Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(-90)))
+        Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(24, 0, Math.toRadians(-90)))
                 .back(25)
+                .build();
+        Trajectory yellow2 = drivetrain.trajectoryBuilder(new Pose2d(24, 0, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)))
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
@@ -148,9 +151,16 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
         Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
                 .back(30)
                 .build();
-        Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .strafeLeft(5)
+        Trajectory yellow3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30.5, 36, Math.toRadians(-90)))
                 .build();
+
+
+
+//        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
+//                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
+//                .build();
+
         Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(6, 25, Math.toRadians(-90)))
                 .back(15)
                 .build();
@@ -186,97 +196,43 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 // outake
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
-                sleep(2000);
+                sleep(1500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
-                sleep(1000);
+                //sleep(1000);
 
-                drivetrain.followTrajectory(backboard1);
-//                drivetrain.turn(Math.toRadians(15));
+//                drivetrain.followTrajectory(backboard1);
+                drivetrain.followTrajectory(yellow1);
 
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
-                sleep(2000);
+                sleep(1500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(goback2);
-                drivetrain.turn(Math.toRadians(-95));
-                drivetrain.followTrajectory(backboard2);
-
+//                drivetrain.turn(Math.toRadians(-95));
+//                drivetrain.followTrajectory(backboard2);
+                drivetrain.followTrajectory(yellow2);
             } else {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
-                sleep(2000);
+                sleep(1500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
-                drivetrain.followTrajectory(backboard3);
-//                drivetrain.followTrajectory(camera3);
+//                drivetrain.followTrajectory(backboard3);
+                drivetrain.followTrajectory(yellow3);
             }
 
             /**
              * April Tag
              */
-
-            DESIRED_TAG_ID = PIXEL_POSITION;
-
-            runtime.reset();
-            while (runtime.seconds() < 9) {
-                // initial detection
-                targetFound = false;
-                desiredTag = null;
-
-                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                for (AprilTagDetection detection : currentDetections) {
-                    if ((detection.metadata != null) &&
-                            ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))) {
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;
-                    } else {
-                        telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
-                    }
-                }
-
-                if (targetFound) {
-                    telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
-                    telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                    telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
-                    telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
-                    telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
-
-
-                    double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                    double headingError = -desiredTag.ftcPose.bearing;
-                    double yawError = desiredTag.ftcPose.yaw;
-
-                    drive = -Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                    turn = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-                    strafe = -Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                    telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-                } else {
-                    telemetry.addData(">", "Stopping...");
-                    drive = 0;
-                    strafe = 0;
-                    turn = 0;
-                }
-
-                telemetry.update();
-                move(drive, strafe, turn);
-                sleep(20);
-            }
-
-            // strafe right a little bit
-            move(0, 0.5, 0);
-            sleep(200);
-            move(0, 0, 0);
 
             // move linear slide back
             robot.leftSlide.setTargetPosition(-1000);
@@ -298,8 +254,8 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
             }
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_Y);
-            sleep(2000);
+            robot.arm.setPosition(ARM_SERVO_X);
+            sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);
             robot.boxServo.setPower(0);

@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -125,13 +126,16 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(90)))
-                .back(21)
+                .lineToLinearHeading(new Pose2d(26, -21, Math.toRadians(90)))
                 .build();
 //        Trajectory backboard1 = drivetrain.trajectoryBuilder(outtake1.end())
 //                .back(0)
 //                .build();
         Trajectory camera1 = drivetrain.trajectoryBuilder(outtake1.end())
                 .strafeLeft(5)
+                .build();
+        Trajectory yellow1 = drivetrain.trajectoryBuilder(camera1.end())
+                .lineToLinearHeading(new Pose2d(23, -36, Math.toRadians(90)))
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -146,6 +150,9 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
         Trajectory camera2 = drivetrain.trajectoryBuilder(backboard2.end())
                 .strafeRight(5)
                 .build();
+        Trajectory yellow2 = drivetrain.trajectoryBuilder(backboard2.end())
+                .lineToLinearHeading(new Pose2d(27, -36, Math.toRadians(90)))
+                .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
                 .splineTo(new Vector2d(30,4), Math.toRadians(90))
@@ -156,6 +163,10 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard2.end())
                 .strafeRight(10)
                 .build();
+        Trajectory yellow3 = drivetrain.trajectoryBuilder(backboard3.end())
+                .lineToLinearHeading(new Pose2d(36, -36, Math.toRadians(90)))
+                .build();
+
         Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(50, -25, Math.toRadians(90)))
                 .back(15)
                 .build();
@@ -196,9 +207,7 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
                 robot.right.setPower(0);
                 sleep(1000);
 
-                drivetrain.followTrajectory(camera1);
-//                drivetrain.turn(Math.toRadians(15));
-
+                drivetrain.followTrajectory(yellow1);
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
                 robot.left.setPower(0.1);
@@ -210,7 +219,8 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
                 drivetrain.followTrajectory(goback2);
                 drivetrain.turn(Math.toRadians(95));
                 drivetrain.followTrajectory(backboard2);
-                drivetrain.followTrajectory(camera2);
+                drivetrain.followTrajectory(yellow2);
+//                drivetrain.followTrajectory(camera2);
             } else {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
@@ -222,66 +232,12 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(backboard3);
-                drivetrain.followTrajectory(camera3);
+                drivetrain.followTrajectory(yellow3);
             }
 
             /**
              * April Tag
              */
-            DESIRED_TAG_ID = PIXEL_POSITION;
-            DESIRED_TAG_ID += 3;
-
-            runtime.reset();
-            while (runtime.seconds() < 7) {
-                // initial detection
-                targetFound = false;
-                desiredTag = null;
-
-                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                for (AprilTagDetection detection : currentDetections) {
-                    if ((detection.metadata != null) &&
-                            ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))) {
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;
-                    } else {
-                        telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
-                    }
-                }
-
-                if (targetFound) {
-                    telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
-                    telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                    telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
-                    telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
-                    telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
-
-
-                    double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                    double headingError = -desiredTag.ftcPose.bearing;
-                    double yawError = desiredTag.ftcPose.yaw;
-
-                    drive = -Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                    turn = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-                    strafe = -Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                    telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-                } else {
-                    telemetry.addData(">", "Stopping...");
-                    drive = 0;
-                    strafe = 0;
-                    turn = 0;
-                }
-
-                telemetry.update();
-                move(drive, strafe, turn);
-                sleep(20);
-            }
-
-//             strafe right a little bit
-            move(0, 0.5, 0);
-            sleep(200);
-            move(0, 0, 0);
 
             // move linear slide up
             robot.leftSlide.setTargetPosition(-1100);
@@ -307,7 +263,7 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_Y);
+            robot.arm.setPosition(ARM_SERVO_X);
             sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);
@@ -335,7 +291,6 @@ public class AutonomousRedCloseParkLeft extends LinearOpMode {
             robot.rightSlide.setPower(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            sleep(1000);
 
             robot.arm.setPosition(ARM_SERVO_POSITION);
             robot.leftSlide.setTargetPosition(0);
