@@ -73,9 +73,9 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.left_trigger != 0) {
                 drive.setWeightedDrivePower(
                         new Pose2d(
-                                -Math.cbrt(Math.cbrt(gamepad1.left_stick_y)) / 10,
-                                -Math.cbrt(Math.cbrt(gamepad1.left_stick_x)) / 10,
-                                -Math.cbrt(gamepad1.right_stick_x / 4) / 10
+                                (-gamepad1.left_stick_y)*(-gamepad1.left_stick_y)*(-gamepad1.left_stick_y)/10,
+                                (-gamepad1.left_stick_x)*(-gamepad1.left_stick_x)*(-gamepad1.left_stick_x)/10,
+                                (-gamepad1.right_stick_x)*(-gamepad1.right_stick_x)*(-gamepad1.right_stick_x)/10
                         ));
             }
             drive.update();
@@ -129,11 +129,14 @@ public class Teleop extends LinearOpMode {
                 robot.rightSlide.setPower(1);
                 waitForLinearSlide(linearSlideTargetHeight);
             }
-            if (gamepad2.left_bumper && robot.leftSlide.getCurrentPosition() <= 950) {
+            if (gamepad2.left_bumper && robot.leftSlide.getCurrentPosition() <= -950) {
 //                robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //                robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.arm.setPosition(ARM_SERVO_POSITION);
                 robot.linear.setPosition(LINEAR_SERVO_POSITION);
+                if (robot.leftSlide.getCurrentPosition() < -1100) {
+                    sleep(200);
+                }
                 int ZERO_SLIDE_HEIGHT = 0;
                 linearSlideTargetHeight = 0;
                 robot.leftSlide.setTargetPosition(ZERO_SLIDE_HEIGHT);
@@ -159,8 +162,8 @@ public class Teleop extends LinearOpMode {
             }
             //front intake
             if (gamepad1.right_trigger != 0) {
-                robot.left.setPower(-1);
-                robot.right.setPower(1);
+                robot.left.setPower(-0.5);
+                robot.right.setPower(0.5);
             }
             if (gamepad2.right_bumper) {
                 SLIDE_HEIGHT = -1300;
@@ -174,10 +177,8 @@ public class Teleop extends LinearOpMode {
                 waitForLinearSlide(linearSlideTargetHeight);
             }
             if (gamepad2.left_stick_y != 0) {
-                if (gamepad2.left_stick_y < 0) {
-                    linearSlideTargetHeight -= 80;
-                } else {
-                    linearSlideTargetHeight += 80;
+                if (gamepad2.left_stick_y < 0) { // linerslide mirco movements
+                    linearSlideTargetHeight += 100*gamepad2.left_stick_y;
                 }
                 if (linearSlideTargetHeight > 0) {
                     linearSlideTargetHeight = 0;
