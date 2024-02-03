@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
+
+import android.util.Size;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -7,16 +13,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import java.util.List;
-import android.util.Size;
-
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -28,6 +27,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -42,7 +42,7 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
     int SLIDE_HEIGHT = -1500;
     private ElapsedTime runtime = new ElapsedTime();
-    int PIXEL_POSITION = 1;
+    int PIXEL_POSITION = 2;
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
@@ -68,6 +68,13 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
     private DistanceSensor leftDistance;
     private DistanceSensor rightDistance;
     private DistanceSensor middleDistance;
+    private SampleMecanumDrive drivetrain;
+    private Trajectory bridge;
+    private Trajectory drop;
+
+
+
+
 
     @Override
     public void runOpMode() {
@@ -122,56 +129,76 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
                 .forward(28)
                 .build();
 
-//        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
-//                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
-//                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(26, -21, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(27, -23, Math.toRadians(90)))
                 .build();
 //        Trajectory backboard1 = drivetrain.trajectoryBuilder(outtake1.end())
 //                .back(0)
 //                .build();
-        Trajectory camera1 = drivetrain.trajectoryBuilder(outtake1.end())
-                .strafeLeft(5)
+        Trajectory yellow1 = drivetrain.trajectoryBuilder(new Pose2d(27, -26, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(20, -33, Math.toRadians(90)))
                 .build();
-        Trajectory yellow1 = drivetrain.trajectoryBuilder(camera1.end())
-                .lineToLinearHeading(new Pose2d(23, -36, Math.toRadians(90)))
-                .build();
-
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
 //                .forward(25)
 //                .build();
         Trajectory goback2 = drivetrain.trajectoryBuilder(detect.end())
                 .back(6)
                 .build();
-        Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(90)))
-                .back(20)
-                .build();
-        Trajectory camera2 = drivetrain.trajectoryBuilder(backboard2.end())
-                .strafeRight(5)
-                .build();
-        Trajectory yellow2 = drivetrain.trajectoryBuilder(backboard2.end())
-                .lineToLinearHeading(new Pose2d(27, -36, Math.toRadians(90)))
+        Trajectory yellow2 = drivetrain.trajectoryBuilder(goback2.end())
+                .lineToLinearHeading(new Pose2d(29.5, -33, Math.toRadians(90)))
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
-                .splineTo(new Vector2d(30,4), Math.toRadians(90))
+                .lineToLinearHeading(new Pose2d(30,3, Math.toRadians(90)))
                 .build();
-        Trajectory backboard3 = drivetrain.trajectoryBuilder(pixelposition3.end())
-                .back(20)
+        Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(90)))
+                .back(30)
                 .build();
-        Trajectory camera3 = drivetrain.trajectoryBuilder(backboard2.end())
-                .strafeRight(10)
+        Trajectory yellow3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(34, -33, Math.toRadians(90)))
                 .build();
-        Trajectory yellow3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .lineToLinearHeading(new Pose2d(36, -36, Math.toRadians(90)))
+//        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(6, 25, Math.toRadians(-90)))
+//                .back(15)
+//                .build();
+
+        Trajectory start = drivetrain.trajectoryBuilder(new Pose2d(53, -28, Math.toRadians(90)))
+                .splineToLinearHeading(new Pose2d(50, 0, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(50, 45, Math.toRadians(90)), Math.toRadians(90))
                 .build();
+        Trajectory stack = drivetrain.trajectoryBuilder(start.end())
+                .lineToLinearHeading(new Pose2d(44, 77, Math.toRadians(90)))
+                .build();
+
+        Trajectory middle = drivetrain.trajectoryBuilder(start.end())
+                .lineToLinearHeading(new Pose2d(47, 55, Math.toRadians(90)))
+                .build();
+
+        Trajectory bridge = drivetrain.trajectoryBuilder(middle.end())
+                .lineToLinearHeading(new Pose2d(47, -15, Math.toRadians(90)))
+                .build();
+        Trajectory drop = drivetrain.trajectoryBuilder(bridge.end())
+                .lineToLinearHeading(new Pose2d(32, -32.4, Math.toRadians(90)))
+                .build();
+        Trajectory drop3 = drivetrain.trajectoryBuilder(bridge.end())
+                .lineToLinearHeading(new Pose2d(22, -32.4, Math.toRadians(90)))
+                .build();
+
+//        Trajectory drop = drivetrain.trajectoryBuilder(middle.end())
+//                .splineToConstantHeading(new Vector2d(53, -25), Math.toRadians(-90))
+//                .splineToConstantHeading(new Vector2d(52.5, 28), Math.toRadians(-90))
+////                .build();
+////        Trajectory drop = drivetrain.trajectoryBuilder(back.end())
+//                .splineToConstantHeading(new Vector2d(26, 31), Math.toRadians(-90))
+//                .build();
 
         Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(4, -20, Math.toRadians(90)))
                 .back(13)
                 .build();
 
+
+
         waitForStart();
+
 
 
         if (opModeIsActive()) {
@@ -187,7 +214,7 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
             } else {
                 PIXEL_POSITION = 3;
             }
-            sleep(1000);
+            sleep(500);
             telemetry.addData("left", leftDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("right", rightDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("middle", middleDistance.getDistance(DistanceUnit.METER));
@@ -196,7 +223,6 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
             telemetry.update();
 
             if (PIXEL_POSITION == 3) {
-                drivetrain.turn(Math.toRadians(90));
                 drivetrain.followTrajectory(outtake1);
 
                 // outake
@@ -207,7 +233,6 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
                 robot.right.setPower(0);
                 sleep(1000);
 
-                drivetrain.followTrajectory(yellow1);
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
                 robot.left.setPower(0.1);
@@ -217,10 +242,6 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(goback2);
-                drivetrain.turn(Math.toRadians(95));
-                drivetrain.followTrajectory(backboard2);
-                drivetrain.followTrajectory(yellow2);
-//                drivetrain.followTrajectory(camera2);
             } else {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
@@ -230,9 +251,6 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
                 sleep(2500);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
-
-                drivetrain.followTrajectory(backboard3);
-                drivetrain.followTrajectory(yellow3);
             }
 
             /**
@@ -240,8 +258,8 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
              */
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1100);
-            robot.rightSlide.setTargetPosition(-1100);
+            robot.leftSlide.setTargetPosition(-1200);
+            robot.rightSlide.setTargetPosition(-1200);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
@@ -257,42 +275,20 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
                 telemetry.update();
                 idle();
             }
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.arm.setPosition(ARM_SERVO_X);
+
+            if (PIXEL_POSITION == 3) {drivetrain.followTrajectory(yellow1);}
+            else if (PIXEL_POSITION == 2) {drivetrain.followTrajectory(yellow2);}
+            else {drivetrain.followTrajectory(yellow3);}
 
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_X);
-            sleep(500);
             robot.boxServo.setPower(1);
             sleep(2000);
             robot.boxServo.setPower(0);
 
             // move linear slide back
-            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
-            while (
-                    robot.leftSlide.isBusy() &&
-                            robot.rightSlide.isBusy() &&
-                            opModeIsActive()) {
-                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-                telemetry.addLine("running");
-                telemetry.update();
-                idle();
-            }
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
             robot.arm.setPosition(ARM_SERVO_POSITION);
+            sleep(500);
             robot.leftSlide.setTargetPosition(0);
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -316,7 +312,6 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             drivetrain.followTrajectory(park);
-
 
             // Save more CPU resources when camera is no longer needed.
             visionPortal.close();
@@ -348,6 +343,8 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
         robot.rightFront.setPower(rightFrontPower);
         robot.leftBack.setPower(leftBackPower);
         robot.rightBack.setPower(rightBackPower);
+
+
     }
 
 

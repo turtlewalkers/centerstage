@@ -240,7 +240,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
              * April Tag
              */
             DESIRED_TAG_ID = PIXEL_POSITION;
-//            DESIRED_TAG_ID += 3;
+            DESIRED_TAG_ID += 3;
 
             runtime.reset();
             while (runtime.seconds() < 5) {
