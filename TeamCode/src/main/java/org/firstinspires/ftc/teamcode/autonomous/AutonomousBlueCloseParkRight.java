@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
+
+import android.util.Size;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -7,27 +13,22 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import java.util.List;
-import android.util.Size;
-
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -122,6 +123,9 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
                 .forward(28)
                 .build();
 
+//        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
+//                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
+//                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(0)))
                 .lineToLinearHeading(new Pose2d(30, 23, Math.toRadians(-90)))
                 .build();
@@ -129,7 +133,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
 //                .strafeRight(14)
 //                .build();
         Trajectory yellow1 = drivetrain.trajectoryBuilder(outtake1.end())
-                .lineToLinearHeading(new Pose2d(21, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(18, 36, Math.toRadians(-90)))
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -142,7 +146,8 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
                 .back(25)
                 .build();
         Trajectory yellow2 = drivetrain.trajectoryBuilder(new Pose2d(24, 0, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
@@ -152,18 +157,46 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
                 .back(30)
                 .build();
         Trajectory yellow3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(30.5, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(31.5, 36, Math.toRadians(-90)))
+                .build();
+//        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(6, 25, Math.toRadians(-90)))
+//                .back(15)
+//                .build();
+
+        Trajectory start = drivetrain.trajectoryBuilder(new Pose2d(26, 28, Math.toRadians(-90)))
+                .splineToLinearHeading(new Pose2d(51, 25, Math.toRadians(-90)), Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(51, -50, Math.toRadians(-90)), Math.toRadians(-90))
+                .build();
+        Trajectory stack = drivetrain.trajectoryBuilder(start.end())
+                .lineToLinearHeading(new Pose2d(47, -74, Math.toRadians(-90)))
+                .build();
+        Trajectory middle = drivetrain.trajectoryBuilder(stack.end())
+                .lineToLinearHeading(new Pose2d(51, -65, Math.toRadians(-90)))
                 .build();
 
-
-
-//        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
-//                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
-//                .build();
+        Trajectory bridge = drivetrain.trajectoryBuilder(middle.end())
+                .lineToLinearHeading(new Pose2d(52, 28, Math.toRadians(-90)))
+                .build();
+        Trajectory drop = drivetrain.trajectoryBuilder(bridge.end())
+                .lineToLinearHeading(new Pose2d(31, 34, Math.toRadians(-90)))
+                .build();
+        Trajectory drop3 = drivetrain.trajectoryBuilder(bridge.end())
+                .lineToLinearHeading(new Pose2d(21, 34, Math.toRadians(-90)))
+                .build();
 
         Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(50, 25, Math.toRadians(-90)))
                 .back(15)
                 .build();
+
+
+//        Trajectory drop = drivetrain.trajectoryBuilder(middle.end())
+//                .splineToConstantHeading(new Vector2d(53, -25), Math.toRadians(-90))
+//                .splineToConstantHeading(new Vector2d(52.5, 28), Math.toRadians(-90))
+////                .build();
+////        Trajectory drop = drivetrain.trajectoryBuilder(back.end())
+//                .splineToConstantHeading(new Vector2d(26, 31), Math.toRadians(-90))
+//                .build();
+
 
         waitForStart();
 
@@ -182,7 +215,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
             } else {
                 PIXEL_POSITION = 3;
             }
-            sleep(2500);
+            sleep(100);
             telemetry.addData("left", leftDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("right", rightDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("middle", middleDistance.getDistance(DistanceUnit.METER));
@@ -196,95 +229,70 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
                 // outake
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
-                sleep(1500);
+                sleep(1750);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
                 //sleep(1000);
 
 //                drivetrain.followTrajectory(backboard1);
-                drivetrain.followTrajectory(yellow1);
-
             } else if (PIXEL_POSITION == 2) {
 //                drivetrain.followTrajectory(pixelposition2);
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
-                sleep(1500);
+                sleep(1750);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(goback2);
 //                drivetrain.turn(Math.toRadians(-95));
 //                drivetrain.followTrajectory(backboard2);
-                drivetrain.followTrajectory(yellow2);
             } else {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
-                sleep(1500);
+                sleep(1750);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
 //                drivetrain.followTrajectory(backboard3);
+            }
+
+            // move linear slide up
+            robot.leftSlide.setTargetPosition(-1100);
+            robot.rightSlide.setTargetPosition(-1100);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftSlide.setPower(1);
+            robot.rightSlide.setPower(1);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
+
+            robot.arm.setPosition(ARM_SERVO_X);
+
+            if (PIXEL_POSITION == 1) {drivetrain.followTrajectory(yellow1);}
+            else if (PIXEL_POSITION == 2) {drivetrain.followTrajectory(yellow2);}
+            else {
                 drivetrain.followTrajectory(yellow3);
             }
 
-            /**
-             * April Tag
-             */
-
-            // move linear slide back
-            robot.leftSlide.setTargetPosition(-1000);
-            robot.rightSlide.setTargetPosition(-1000);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
-            while (
-                    robot.leftSlide.isBusy() &&
-                            robot.rightSlide.isBusy() &&
-                            opModeIsActive()) {
-                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-                telemetry.addLine("running");
-                telemetry.update();
-                idle();
-            }
-
             // move servo and score pixel
-            robot.arm.setPosition(ARM_SERVO_X);
-            sleep(500);
             robot.boxServo.setPower(1);
-            sleep(2000);
+            sleep(1000);
             robot.boxServo.setPower(0);
 
-            // move linear slide back
-            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
-            while (
-                    robot.leftSlide.isBusy() &&
-                            robot.rightSlide.isBusy() &&
-                            opModeIsActive()) {
-                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-                telemetry.addLine("running");
-                telemetry.update();
-                idle();
-            }
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            sleep(1000);
-
             robot.arm.setPosition(ARM_SERVO_POSITION);
+            sleep(1000);
             robot.leftSlide.setTargetPosition(0);
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);

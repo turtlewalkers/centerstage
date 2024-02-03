@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Autonomous
-public class AutonomousRedCloseParkRight extends LinearOpMode {
+public class AutonomousRedClose2p2 extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
     int SLIDE_HEIGHT = -1500;
     private ElapsedTime runtime = new ElapsedTime();
@@ -70,7 +70,7 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
     private DistanceSensor middleDistance;
     private SampleMecanumDrive drivetrain;
     private Trajectory bridge;
-    private Trajectory drop;
+   private Trajectory drop;
 
 
 
@@ -191,11 +191,6 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
 //                .splineToConstantHeading(new Vector2d(26, 31), Math.toRadians(-90))
 //                .build();
 
-        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(4, -20, Math.toRadians(90)))
-                .back(13)
-                .build();
-
-
 
         waitForStart();
 
@@ -311,7 +306,81 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            drivetrain.followTrajectory(park);
+            drivetrain.followTrajectory(start);
+            drivetrain.followTrajectory(stack);
+//intake
+            robot.left.setPower(-1);
+            robot.right.setPower(1);
+            sleep(800);
+            drivetrain.followTrajectory(middle);
+            robot.left.setPower(-0.7);
+            robot.right.setPower(0.7);
+            robot.middle.setPower(0.7);
+            robot.rolltop.setPower(-0.7);
+            robot.boxServo.setPower(-0.7);
+            drivetrain.followTrajectory(bridge);
+
+
+// move linear slide up
+            robot.leftSlide.setTargetPosition(-1480);
+            robot.rightSlide.setTargetPosition(-1480);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftSlide.setPower(1);
+            robot.rightSlide.setPower(1);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
+
+// move servo and score pixel
+            robot.arm.setPosition(ARM_SERVO_X);
+
+            if (PIXEL_POSITION != 1) {
+                drivetrain.followTrajectory(drop);
+            } else {
+                drivetrain.followTrajectory(drop3);
+            }
+            robot.left.setPower(0);
+            robot.right.setPower(0);
+            robot.middle.setPower(0);
+            robot.rolltop.setPower(0);
+            robot.boxServo.setPower(0);
+
+            robot.boxServo.setPower(1);
+            sleep(1000);
+            robot.boxServo.setPower(0);
+
+            robot.arm.setPosition(ARM_SERVO_POSITION);
+            sleep(500);
+            robot.leftSlide.setTargetPosition(0);
+            robot.rightSlide.setTargetPosition(0);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftSlide.setPower(1);
+            robot.rightSlide.setPower(1);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
+            robot.leftSlide.setPower(0);
+            robot.rightSlide.setPower(0);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // Save more CPU resources when camera is no longer needed.
             visionPortal.close();
