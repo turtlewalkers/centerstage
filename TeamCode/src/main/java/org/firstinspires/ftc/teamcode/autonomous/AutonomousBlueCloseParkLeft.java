@@ -260,11 +260,11 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
             }
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1100);
-            robot.rightSlide.setTargetPosition(-1100);
+            robot.leftSlide.setTargetPosition(-1300);
+            robot.rightSlide.setTargetPosition(-1300);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
+ robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
             while (
                     robot.leftSlide.isBusy() &&
@@ -297,7 +297,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
+ robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
             while (
                     robot.leftSlide.isBusy() &&
