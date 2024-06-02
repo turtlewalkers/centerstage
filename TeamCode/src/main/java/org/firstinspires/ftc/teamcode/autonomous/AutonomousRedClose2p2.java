@@ -136,7 +136,7 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
 //                .back(0)
 //                .build();
         Trajectory yellow1 = drivetrain.trajectoryBuilder(new Pose2d(27, -26, Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(20, -33, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(20, -34, Math.toRadians(90)))
                 .build();
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
 //                .forward(25)
@@ -145,7 +145,7 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
                 .back(6)
                 .build();
         Trajectory yellow2 = drivetrain.trajectoryBuilder(goback2.end())
-                .lineToLinearHeading(new Pose2d(29.5, -33, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(30.5, -34, Math.toRadians(90)))
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
@@ -155,32 +155,32 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
                 .back(30)
                 .build();
         Trajectory yellow3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(34, -33, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(34, -34, Math.toRadians(90)))
                 .build();
 //        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(6, 25, Math.toRadians(-90)))
 //                .back(15)
 //                .build();
 
-        Trajectory start = drivetrain.trajectoryBuilder(new Pose2d(53, -28, Math.toRadians(90)))
-                .splineToLinearHeading(new Pose2d(50, 0, Math.toRadians(90)), Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(50, 45, Math.toRadians(90)), Math.toRadians(90))
+        Trajectory start = drivetrain.trajectoryBuilder(new Pose2d(51, -28, Math.toRadians(90)))
+                .splineToLinearHeading(new Pose2d(51, 0, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(51, 45, Math.toRadians(90)), Math.toRadians(90))
                 .build();
         Trajectory stack = drivetrain.trajectoryBuilder(start.end())
                 .lineToLinearHeading(new Pose2d(44, 77, Math.toRadians(90)))
                 .build();
 
         Trajectory middle = drivetrain.trajectoryBuilder(start.end())
-                .lineToLinearHeading(new Pose2d(47, 55, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(50, 55, Math.toRadians(90)))
                 .build();
 
         Trajectory bridge = drivetrain.trajectoryBuilder(middle.end())
-                .lineToLinearHeading(new Pose2d(47, -15, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(50, -15, Math.toRadians(90)))
                 .build();
         Trajectory drop = drivetrain.trajectoryBuilder(bridge.end())
-                .lineToLinearHeading(new Pose2d(32, -32.4, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(32, -33, Math.toRadians(90)))
                 .build();
         Trajectory drop3 = drivetrain.trajectoryBuilder(bridge.end())
-                .lineToLinearHeading(new Pose2d(22, -32.4, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(22, -33, Math.toRadians(90)))
                 .build();
 
 //        Trajectory drop = drivetrain.trajectoryBuilder(middle.end())
@@ -209,7 +209,7 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
             } else {
                 PIXEL_POSITION = 3;
             }
-            sleep(500);
+            sleep(750);
             telemetry.addData("left", leftDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("right", rightDistance.getDistance(DistanceUnit.METER));
             telemetry.addData("middle", middleDistance.getDistance(DistanceUnit.METER));
@@ -253,11 +253,11 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
              */
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1200);
-            robot.rightSlide.setTargetPosition(-1200);
+            robot.leftSlide.setTargetPosition(-1300);
+            robot.rightSlide.setTargetPosition(-1300);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
+ robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
             while (
                     robot.leftSlide.isBusy() &&
@@ -288,7 +288,7 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
+ robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
             while (
                     robot.leftSlide.isBusy() &&
@@ -322,11 +322,11 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
 
 
 // move linear slide up
-            robot.leftSlide.setTargetPosition(-1480);
-            robot.rightSlide.setTargetPosition(-1480);
+            robot.leftSlide.setTargetPosition(-1500);
+            robot.rightSlide.setTargetPosition(-1500);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
+ robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
             while (
                     robot.leftSlide.isBusy() &&
@@ -364,7 +364,7 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
+ robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
             while (
                     robot.leftSlide.isBusy() &&

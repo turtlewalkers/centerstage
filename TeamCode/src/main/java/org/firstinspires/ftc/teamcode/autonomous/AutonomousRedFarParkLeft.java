@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousRedFarParkLeft extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1500;
+    int SLIDE_HEIGHT = -1700;
     private final ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 1;
 
@@ -293,8 +293,8 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
             move(0, 0, 0);
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1100);
-            robot.rightSlide.setTargetPosition(-1100);
+            robot.leftSlide.setTargetPosition(-1300);
+            robot.rightSlide.setTargetPosition(-1300);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
