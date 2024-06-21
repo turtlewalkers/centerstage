@@ -119,8 +119,8 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.right_trigger != 0) {
 //                robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //                robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                linearSlideTargetHeight = -2700;
-                SLIDE_HEIGHT = -2700;
+                linearSlideTargetHeight = -2250;
+                SLIDE_HEIGHT = -2250;
                 robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
                 robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -166,8 +166,8 @@ robot.leftSlide.setPower(1);
                 robot.right.setPower(0.5);
             }
             if (gamepad2.right_bumper) {
-                SLIDE_HEIGHT = -1500;
-                linearSlideTargetHeight = -1500;
+                SLIDE_HEIGHT = -1000;
+                linearSlideTargetHeight = -1000;
                 robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
                 robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);

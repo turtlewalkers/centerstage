@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousBlueCloseParkRight extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1500;
+    int SLIDE_HEIGHT = -1000;
     private ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 2;
 
@@ -127,7 +127,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(30, 23, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30, 24, Math.toRadians(-90)))
                 .build();
 //        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(28, 23, Math.toRadians(-90)))
 //                .strafeRight(14)
@@ -260,8 +260,8 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
             }
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1300);
-            robot.rightSlide.setTargetPosition(-1300);
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
  robot.leftSlide.setPower(1);

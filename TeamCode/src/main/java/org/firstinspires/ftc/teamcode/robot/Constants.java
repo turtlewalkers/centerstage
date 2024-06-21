@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class Constants {
     public static double LINEAR_SERVO_POSITION = 0;
     public static double INTAKE_TIME = 2.1;
-    public static double ARM_SERVO_POSITION = 0.25;
-    public static double ARM_SERVO_Y = 0.55;
-    public static double ARM_SERVO_X = 0.73;
+    public static double ARM_SERVO_POSITION = 0.2;
+    public static double ARM_SERVO_Y = 1;
+    public static double ARM_SERVO_X = 0.9  ;
 }

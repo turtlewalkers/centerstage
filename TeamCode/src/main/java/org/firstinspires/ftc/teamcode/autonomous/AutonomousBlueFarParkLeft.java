@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousBlueFarParkLeft extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1700;
+    int SLIDE_HEIGHT = -1000;
     private ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 1;
 
@@ -136,7 +136,7 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
                 .back(70)
                 .build();
         Trajectory camera1 = drivetrain.trajectoryBuilder(backboard1.end())
-                .strafeLeft(13)
+                .lineToLinearHeading(new Pose2d(1, 70, Math.toRadians(-90)))
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -147,6 +147,9 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
                 .build();
         Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(-90)))
                 .back(50)
+                .build();
+        Trajectory camera2 = drivetrain.trajectoryBuilder(backboard2.end())
+                .lineToLinearHeading(new Pose2d(1, 70, Math.toRadians(-90)))
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
@@ -159,7 +162,7 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
                 .back(65)
                 .build();
         Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .strafeLeft(25)
+                .lineToLinearHeading(new Pose2d(1, 70, Math.toRadians(-90)))
                 .build();
         Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(3, 70, Math.toRadians(-90)))
                 .back(15)
@@ -217,7 +220,7 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
                 drivetrain.followTrajectory(goback2);
                 drivetrain.turn(Math.toRadians(-95));
                 drivetrain.followTrajectory(backboard2);
-
+                drivetrain.followTrajectory(camera2);
             } else {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
@@ -237,63 +240,63 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
              * April Tag
              */
 
-            DESIRED_TAG_ID = PIXEL_POSITION;
-
-            runtime.reset();
-            while (runtime.seconds() < 7) {
-                // initial detection
-                targetFound = false;
-                desiredTag = null;
-
-                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                for (AprilTagDetection detection : currentDetections) {
-                    if ((detection.metadata != null) &&
-                            ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))) {
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;
-                    } else {
-                        telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
-                    }
-                }
-
-                if (targetFound) {
-                    telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
-                    telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                    telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
-                    telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
-                    telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
-
-
-                    double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                    double headingError = -desiredTag.ftcPose.bearing;
-                    double yawError = desiredTag.ftcPose.yaw;
-
-                    drive = -Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                    turn = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-                    strafe = -Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                    telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-                } else {
-                    telemetry.addData(">", "Stopping...");
-                    drive = 0;
-                    strafe = 0;
-                    turn = 0;
-                }
-
-                telemetry.update();
-                move(drive, strafe, turn);
-                sleep(20);
-            }
-
-            // strafe right a little bit
-            move(0, 0.5, 0);
-            sleep(200);
-            move(0, 0, 0);
+//            DESIRED_TAG_ID = PIXEL_POSITION;
+//
+//            runtime.reset();
+//            while (runtime.seconds() < 7) {
+//                // initial detection
+//                targetFound = false;
+//                desiredTag = null;
+//
+//                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+//                for (AprilTagDetection detection : currentDetections) {
+//                    if ((detection.metadata != null) &&
+//                            ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))) {
+//                        targetFound = true;
+//                        desiredTag = detection;
+//                        break;
+//                    } else {
+//                        telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+//                    }
+//                }
+//
+//                if (targetFound) {
+//                    telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
+//                    telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+//                    telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
+//                    telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
+//                    telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
+//
+//
+//                    double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+//                    double headingError = -desiredTag.ftcPose.bearing;
+//                    double yawError = desiredTag.ftcPose.yaw;
+//
+//                    drive = -Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+//                    turn = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+//                    strafe = -Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+//
+//                    telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+//                } else {
+//                    telemetry.addData(">", "Stopping...");
+//                    drive = 0;
+//                    strafe = 0;
+//                    turn = 0;
+//                }
+//
+//                telemetry.update();
+//                move(drive, strafe, turn);
+//                sleep(20);
+//            }
+//
+//            // strafe right a little bit
+//            move(0, 0.5, 0);
+//            sleep(200);
+//            move(0, 0, 0);
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1300);
-            robot.rightSlide.setTargetPosition(-1300);
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);

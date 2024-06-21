@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousRedFarParkRight extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1700;
+    int SLIDE_HEIGHT = -1000;
     private final ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 1;
 
@@ -142,13 +142,13 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
 //                .forward(25)
 //                .build();
         Trajectory goback2 = drivetrain.trajectoryBuilder(detect.end())
-                .back(6)
+                .lineToLinearHeading(new Pose2d(1, 2, Math.toRadians(90)))
                 .build();
-        Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(90)))
-                .back(60)
+        Trajectory backboard2 = drivetrain.trajectoryBuilder(goback2.end())
+                .back(70)
                 .build();
         Trajectory camera2 = drivetrain.trajectoryBuilder(backboard2.end())
-                .strafeRight(4)
+                .strafeRight(32)
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
@@ -196,13 +196,13 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
                 // outake
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
-                sleep(2000);
+                sleep(1750);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
-                sleep(1000);
 
                 drivetrain.followTrajectory(goUnder1);
-                drivetrain.turn(Math.toRadians(180));
+//                drivetrain.turn(180);
+                sleep(1000);
                 drivetrain.followTrajectory(backboard1);
                 sleep(2000);
                 drivetrain.followTrajectory(camera1);
@@ -212,27 +212,28 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
 //                drivetrain.followTrajectory(pixelposition2);
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
-                sleep(2500);
+                sleep(1750);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(goback2);
-                drivetrain.turn(Math.toRadians(95));
+//                drivetrain.turn(Math.toRadians(95));
                 drivetrain.followTrajectory(backboard2);
-//                drivetrain.followTrajectory(camera2);
+                sleep(3000);
+                drivetrain.followTrajectory(camera2);
             } else {
                 telemetry.addLine("Pixel position Else");
                 drivetrain.followTrajectory(pixelposition3);
 
                 robot.left.setPower(0.1);
                 robot.right.setPower(-0.1);
-                sleep(2500);
+                sleep(1750);
                 robot.left.setPower(0);
                 robot.right.setPower(0);
 
                 drivetrain.followTrajectory(goUnder3);
                 drivetrain.followTrajectory(backboard3);
-                sleep(2000);
+                sleep(3000);
                 drivetrain.followTrajectory(camera3);
             }
 
@@ -243,7 +244,7 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
             DESIRED_TAG_ID += 3;
 
             runtime.reset();
-            while (runtime.seconds() < 5) {
+            while (runtime.seconds() < 2.5) {
                 // initial detection
                 targetFound = false;
                 desiredTag = null;
@@ -295,8 +296,8 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
             move(0, 0, 0);
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1300);
-            robot.rightSlide.setTargetPosition(-1300);
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftSlide.setPower(1);
@@ -321,32 +322,8 @@ public class AutonomousRedFarParkRight extends LinearOpMode {
             robot.arm.setPosition(ARM_SERVO_X);
             sleep(500);
             robot.boxServo.setPower(1);
-            sleep(2000);
-            robot.boxServo.setPower(0);
-
-            // move linear slide back
-            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
-            while (
-                    robot.leftSlide.isBusy() &&
-                            robot.rightSlide.isBusy() &&
-                            opModeIsActive()) {
-                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-                telemetry.addLine("running");
-                telemetry.update();
-                idle();
-            }
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             sleep(1000);
+            robot.boxServo.setPower(0);
 
             robot.arm.setPosition(ARM_SERVO_POSITION);
             robot.leftSlide.setTargetPosition(0);
