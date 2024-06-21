@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousBlueCloseParkLeft extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1500;
+    int SLIDE_HEIGHT = -1000;
     private ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 2;
 
@@ -127,13 +127,13 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(30, 23, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30, 24, Math.toRadians(-90)))
                 .build();
 //        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(28, 23, Math.toRadians(-90)))
 //                .strafeRight(14)
 //                .build();
         Trajectory yellow1 = drivetrain.trajectoryBuilder(outtake1.end())
-                .lineToLinearHeading(new Pose2d(18, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(18, 36.6, Math.toRadians(-90)))
                 .build();
 
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
@@ -146,7 +146,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .back(25)
                 .build();
         Trajectory yellow2 = drivetrain.trajectoryBuilder(new Pose2d(24, 0, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(25.5, 36.6, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -157,7 +157,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .back(30)
                 .build();
         Trajectory yellow3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(31.5, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(31.5, 36.6, Math.toRadians(-90)))
                 .build();
 //        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(6, 25, Math.toRadians(-90)))
 //                .back(15)
@@ -260,8 +260,8 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
             }
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1300);
-            robot.rightSlide.setTargetPosition(-1300);
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
  robot.leftSlide.setPower(1);

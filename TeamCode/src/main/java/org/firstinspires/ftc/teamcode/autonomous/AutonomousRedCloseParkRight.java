@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousRedCloseParkRight extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1500;
+    int SLIDE_HEIGHT = -1000;
     private ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 2;
 
@@ -136,7 +136,7 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
 //                .back(0)
 //                .build();
         Trajectory yellow1 = drivetrain.trajectoryBuilder(new Pose2d(27, -26, Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(20, -34, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(20, -36.9, Math.toRadians(90)))
                 .build();
 //        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
 //                .forward(25)
@@ -145,7 +145,7 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
                 .back(6)
                 .build();
         Trajectory yellow2 = drivetrain.trajectoryBuilder(goback2.end())
-                .lineToLinearHeading(new Pose2d(30.5, -34, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(30.5, -36.9, Math.toRadians(90)))
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
@@ -155,7 +155,7 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
                 .back(30)
                 .build();
         Trajectory yellow3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(34, -34, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(34, -36.9, Math.toRadians(90)))
                 .build();
 //        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(6, 25, Math.toRadians(-90)))
 //                .back(15)
@@ -257,8 +257,8 @@ public class AutonomousRedCloseParkRight extends LinearOpMode {
              */
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1300);
-            robot.rightSlide.setTargetPosition(-1300);
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
  robot.leftSlide.setPower(1);

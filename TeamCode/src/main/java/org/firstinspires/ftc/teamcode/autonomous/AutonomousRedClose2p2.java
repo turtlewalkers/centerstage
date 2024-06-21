@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutonomousRedClose2p2 extends LinearOpMode {
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1500;
+    int SLIDE_HEIGHT = -1000;
     private ElapsedTime runtime = new ElapsedTime();
     int PIXEL_POSITION = 2;
 
@@ -253,8 +253,8 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
              */
 
             // move linear slide up
-            robot.leftSlide.setTargetPosition(-1300);
-            robot.rightSlide.setTargetPosition(-1300);
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
  robot.leftSlide.setPower(1);
@@ -322,8 +322,8 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
 
 
 // move linear slide up
-            robot.leftSlide.setTargetPosition(-1500);
-            robot.rightSlide.setTargetPosition(-1500);
+            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT-300);
+            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT-300);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
  robot.leftSlide.setPower(1);
