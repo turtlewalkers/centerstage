@@ -47,13 +47,25 @@ public class OpenCV extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
+        telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
+        telemetry.addData("Distance in Inch", (getDistance(width)));
 
+        while (!opModeIsActive()) {
+            if (cX < 200) {
+                telemetry.addLine("Position 1");
+            } else if (cX < 400) {
+                telemetry.addLine("Position 2");
+            } else if (cX > 400) {
+                telemetry.addLine("Position 3");
+            } else {
+                telemetry.addLine("Position 1");
+            }
+            telemetry.update();
+        }
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
-            telemetry.addData("Distance in Inch", (getDistance(width)));
-            telemetry.update();
+
 
             // The OpenCV pipeline automatically processes frames and handles detection
         }
@@ -123,10 +135,9 @@ public class OpenCV extends LinearOpMode {
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
             // red: (100, 100, 100), (180, 255, 255)
-
             // blue: 10, 55
-            Scalar lowerYellow = new Scalar(140, 100, 100);
-            Scalar upperYellow = new Scalar(255, 100, 255);
+            Scalar lowerYellow = new Scalar(10, 100, 100);
+            Scalar upperYellow = new Scalar(55, 255, 255);
 
 
             Mat yellowMask = new Mat();

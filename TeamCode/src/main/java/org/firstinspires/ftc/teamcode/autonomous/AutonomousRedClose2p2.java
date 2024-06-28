@@ -4,8 +4,8 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
 
-import android.util.Size;
-
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -21,12 +21,27 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.camera.OpenCV;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -72,6 +87,18 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
     private Trajectory bridge;
    private Trajectory drop;
 
+    double cX = 0;
+    double cY = 0;
+    double width = 0;
+
+    private OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
+    private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
+    private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
+
+    // Calculate the distance using the formula
+    public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
+    public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
+
 
 
 
@@ -100,26 +127,6 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
         robot.leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        aprilTag = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
-                .setDrawTagID(true)
-                .setDrawTagOutline(true)
-                .build();
-
-        VisionPortal visionPortal = new VisionPortal.Builder()
-                .addProcessor(aprilTag)
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .setCameraResolution(new Size(640, 480))
-                .build();
-
-        // TODO: We might want to change this
-        setManualExposure(6, 200);
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
 
         /*
         Trajectories
@@ -191,7 +198,26 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
 //                .splineToConstantHeading(new Vector2d(26, 31), Math.toRadians(-90))
 //                .build();
 
+        initOpenCV();
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
+        telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
+        telemetry.addData("Distance in Inch", (getDistance(width)));
+
+        while (!opModeIsActive()) {
+            if (cX < 200) {
+                telemetry.addLine("Position 1");
+            } else if (cX < 400) {
+                telemetry.addLine("Position 2");
+            } else if (cX > 400) {
+                telemetry.addLine("Position 3");
+            } else {
+                telemetry.addLine("Position 1");
+            }
+            telemetry.update();
+        }
         waitForStart();
 
 
@@ -388,65 +414,105 @@ public class AutonomousRedClose2p2 extends LinearOpMode {
         } // end runOpMode()
     }
 
-    private void move (double x, double y, double yaw) {
-        // Calculate wheel powers.
-        double leftFrontPower = x - y - yaw;
-        double rightFrontPower = x + y + yaw;
-        double leftBackPower = x + y - yaw;
-        double rightBackPower = x - y + yaw;
+    private void initOpenCV() {
 
-        // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
+        // Create an instance of the camera
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        if (max > 1.0) {
-            leftFrontPower /= max;
-            rightFrontPower /= max;
-            leftBackPower /= max;
-            rightBackPower /= max;
+        // Use OpenCvCameraFactory class from FTC SDK to create camera instance
+        controlHubCam = OpenCvCameraFactory.getInstance().createWebcam(
+                hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
+        controlHubCam.setPipeline(new YellowBlobDetectionPipeline());
+
+        controlHubCam.openCameraDevice();
+        controlHubCam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+    }
+    class YellowBlobDetectionPipeline extends OpenCvPipeline {
+        @Override
+        public Mat processFrame(Mat input) {
+            // Preprocess the frame to detect yellow regions
+            Mat yellowMask = preprocessFrame(input);
+
+            // Find contours of the detected yellow regions
+            List<MatOfPoint> contours = new ArrayList<>();
+            Mat hierarchy = new Mat();
+            Imgproc.findContours(yellowMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            // Find the largest yellow contour (blob)
+            MatOfPoint largestContour = findLargestContour(contours);
+
+            if (largestContour != null) {
+                // Draw a red outline around the largest detected object
+                Imgproc.drawContours(input, contours, contours.indexOf(largestContour), new Scalar(255, 0, 0), 2);
+                // Calculate the width of the bounding box
+                width = calculateWidth(largestContour);
+
+                // Display the width next to the label
+                String widthLabel = "Width: " + (int) width + " pixels";
+                Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                //Display the Distance
+                String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
+                Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                // Calculate the centroid of the largest contour
+                Moments moments = Imgproc.moments(largestContour);
+                cX = moments.get_m10() / moments.get_m00();
+                cY = moments.get_m01() / moments.get_m00();
+
+                // Draw a dot at the centroid
+                String label = "(" + (int) cX + ", " + (int) cY + ")";
+                Imgproc.putText(input, label, new Point(cX + 10, cY), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                Imgproc.circle(input, new Point(cX, cY), 5, new Scalar(0, 255, 0), -1);
+
+            }
+
+            return input;
         }
 
-        // Send powers to the wheels.
-        robot.leftFront.setPower(leftFrontPower);
-        robot.rightFront.setPower(rightFrontPower);
-        robot.leftBack.setPower(leftBackPower);
-        robot.rightBack.setPower(rightBackPower);
+        private Mat preprocessFrame(Mat frame) {
+            Mat hsvFrame = new Mat();
+            Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
+            // red: (100, 100, 100), (180, 255, 255)
+            // blue: 10, 55
+            Scalar lowerYellow = new Scalar(10, 100, 100);
+            Scalar upperYellow = new Scalar(55, 255, 255);
+
+
+            Mat yellowMask = new Mat();
+            Core.inRange(hsvFrame, lowerYellow, upperYellow, yellowMask);
+
+            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+            Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_OPEN, kernel);
+            Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_CLOSE, kernel);
+
+            return yellowMask;
+        }
+
+        private MatOfPoint findLargestContour(List<MatOfPoint> contours) {
+            double maxArea = 0;
+            MatOfPoint largestContour = null;
+
+            for (MatOfPoint contour : contours) {
+                double area = Imgproc.contourArea(contour);
+                if (area > maxArea) {
+                    maxArea = area;
+                    largestContour = contour;
+                }
+            }
+
+            return largestContour;
+        }
+        private double calculateWidth(MatOfPoint contour) {
+            Rect boundingRect = Imgproc.boundingRect(contour);
+            return boundingRect.width;
+        }
 
     }
-
-
-    /**
-     * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
-     */
-    private void setManualExposure(int exposureMS, int gain) {
-        if (visionPortal == null) {
-            return;
-        }
-
-        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera", "Waiting");
-            telemetry.update();
-            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-                sleep(20);
-            }
-            telemetry.addData("Camera", "Ready");
-            telemetry.update();
-        }
-
-        if (!isStopRequested())
-        {
-            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
-                exposureControl.setMode(ExposureControl.Mode.Manual);
-                sleep(50);
-            }
-            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-            sleep(20);
-            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-            gainControl.setGain(gain);
-            sleep(20);
-        }
+    private static double getDistance(double width){
+        double distance = (objectWidthInRealWorldUnits * focalLength) / width;
+        return distance;
     }
+
 }   // end class
