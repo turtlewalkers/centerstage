@@ -125,8 +125,8 @@ public class Teleop extends LinearOpMode {
                 robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
+                robot.leftSlide.setPower(1);
+                robot.rightSlide.setPower(1);
                 waitForLinearSlide(linearSlideTargetHeight);
             }
             if (gamepad2.left_bumper && robot.leftSlide.getCurrentPosition() <= -950) {
@@ -143,8 +143,8 @@ robot.leftSlide.setPower(1);
                 robot.rightSlide.setTargetPosition(ZERO_SLIDE_HEIGHT);
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
+                robot.leftSlide.setPower(1);
+                robot.rightSlide.setPower(1);
                 waitForLinearSlide(linearSlideTargetHeight);
             }
 
@@ -172,8 +172,8 @@ robot.leftSlide.setPower(1);
                 robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
+                robot.leftSlide.setPower(1);
+                robot.rightSlide.setPower(1);
                 waitForLinearSlide(linearSlideTargetHeight);
             }
             if (gamepad2.left_stick_y != 0) {
@@ -189,8 +189,8 @@ robot.leftSlide.setPower(1);
                 robot.rightSlide.setTargetPosition(linearSlideTargetHeight);
                 robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
+                robot.leftSlide.setPower(1);
+                robot.rightSlide.setPower(1);
                 waitForLinearSlide(linearSlideTargetHeight);
             }
 //            robot.arm.setPosition(gamepad2.left_stick_y);
