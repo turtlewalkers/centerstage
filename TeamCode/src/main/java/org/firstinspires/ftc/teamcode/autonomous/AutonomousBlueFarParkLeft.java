@@ -188,12 +188,16 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
         while (!opModeIsActive()) {
             if (cX < 200) {
                 telemetry.addLine("Position 1");
+                PIXEL_POSITION = 1;
             } else if (cX < 400) {
                 telemetry.addLine("Position 2");
+                PIXEL_POSITION = 2;
             } else if (cX > 400) {
                 telemetry.addLine("Position 3");
+                PIXEL_POSITION = 3;
             } else {
                 telemetry.addLine("Position 1");
+                PIXEL_POSITION = 1;
             }
             telemetry.update();
         }

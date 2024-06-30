@@ -134,7 +134,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
 //        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
-        Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d(28, 0, Math.toRadians(0)))
+        Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(30, 24, Math.toRadians(-90)))
                 .build();
 //        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(28, 23, Math.toRadians(-90)))
@@ -153,9 +153,8 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
         Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(24, 0, Math.toRadians(-90)))
                 .back(25)
                 .build();
-        Trajectory yellow2 = drivetrain.trajectoryBuilder(new Pose2d(24, 0, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+        Trajectory yellow2 = drivetrain.trajectoryBuilder(goback2.end())
+                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)))
                 .build();
 
         Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
@@ -165,7 +164,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
                 .back(30)
                 .build();
         Trajectory yellow3 = drivetrain.trajectoryBuilder(new Pose2d(26, -2, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(33.5, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(35, 36, Math.toRadians(-90)))
                 .build();
 //        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(6, 25, Math.toRadians(-90)))
 //                .back(15)
@@ -174,6 +173,10 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
         Trajectory start = drivetrain.trajectoryBuilder(new Pose2d(26, 28, Math.toRadians(-90)))
                 .splineToLinearHeading(new Pose2d(51, 25, Math.toRadians(-90)), Math.toRadians(-90))
                 .splineToLinearHeading(new Pose2d(51, -50, Math.toRadians(-90)), Math.toRadians(-90))
+                .addDisplacementMarker(() -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
                 .splineToLinearHeading(new Pose2d(47, -74, Math.toRadians(-90)), Math.toRadians(-90),
                         SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -182,7 +185,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
 //                .lineToLinearHeading(new Pose2d(47, -74, Math.toRadians(-90)))
 //                .build();
         Trajectory middle = drivetrain.trajectoryBuilder(start.end())
-                .lineToLinearHeading(new Pose2d(51, -65, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(52, -65, Math.toRadians(-90)))
                 .build();
 
         Trajectory bridge = drivetrain.trajectoryBuilder(middle.end())
@@ -215,12 +218,16 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
         while (!opModeIsActive()) {
             if (cX < 200) {
                 telemetry.addLine("Position 1");
+                PIXEL_POSITION = 1;
             } else if (cX < 400) {
                 telemetry.addLine("Position 2");
+                PIXEL_POSITION = 2;
             } else if (cX > 400) {
                 telemetry.addLine("Position 3");
+                PIXEL_POSITION = 3;
             } else {
                 telemetry.addLine("Position 1");
+                PIXEL_POSITION = 1;
             }
             telemetry.update();
         }
@@ -233,7 +240,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
              */
 
             if (PIXEL_POSITION == 1) {
-                drivetrain.followTrajectory(detect);
+//                drivetrain.followTrajectory(detect);
                 drivetrain.followTrajectory(outtake1);
 
                 // outake
@@ -276,9 +283,19 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
- robot.leftSlide.setPower(1);
+            robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
-            waitForLinearSlide(SLIDE_HEIGHT);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
 
             robot.arm.setPosition(ARM_SERVO_X);
 
@@ -301,7 +318,17 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
  robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
-            waitForLinearSlide(0);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
             robot.leftSlide.setPower(0);
             robot.rightSlide.setPower(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -309,8 +336,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
 
             drivetrain.followTrajectory(start);
 //intake
-            robot.left.setPower(-1);
-            robot.right.setPower(1);
+
             sleep(600);
             drivetrain.followTrajectory(middle);
             robot.left.setPower(-0.7);
@@ -328,7 +354,17 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
  robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
-            waitForLinearSlide(SLIDE_HEIGHT-300);
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
+                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
+                telemetry.addLine("running");
+                telemetry.update();
+                idle();
+            }
 
 // move servo and score pixel
             robot.arm.setPosition(ARM_SERVO_X);
@@ -353,49 +389,25 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
  robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
-            waitForLinearSlide(0);
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-
-
-            // drivetrain.followTrajectory(park);
-
-            // Save more CPU resources when camera is no longer needed.
-            visionPortal.close();
-
-        } // end runOpMode()
-    }
-
-    private void waitForLinearSlide(int linearSlideTarget){
-        new Thread(() -> {
-            ElapsedTime runtime = new ElapsedTime();
-            runtime.reset();
-            while ((robot.leftSlide.isBusy() &&
-                    robot.rightSlide.isBusy() &&
-                    opModeIsActive()) ||
-                    runtime.seconds() < 1.5) {
-                telemetry.addData("linearSlideTarget", linearSlideTarget);
-                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
+            while (
+                    robot.leftSlide.isBusy() &&
+                            robot.rightSlide.isBusy() &&
+                            opModeIsActive()) {
                 telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
+                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
                 telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
                 telemetry.addLine("running");
                 telemetry.update();
                 idle();
             }
-//            robot.leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            robot.rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            if (robot.leftSlide.getTargetPosition() == 0) {
-                robot.leftSlide.setPower(0);
-                robot.rightSlide.setPower(0);
-            }
-        }).start();
+            robot.leftSlide.setPower(0);
+            robot.rightSlide.setPower(0);
+            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
+        } // end runOpMode()
     }
+
     private void initOpenCV() {
 
         // Create an instance of the camera
