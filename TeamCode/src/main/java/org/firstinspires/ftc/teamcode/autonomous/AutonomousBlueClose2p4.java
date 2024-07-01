@@ -286,7 +286,7 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                     })
                     .splineToLinearHeading(new Pose2d(51, 25, Math.toRadians(-90)), Math.toRadians(-90))
                     .splineToLinearHeading(new Pose2d(51, -50, Math.toRadians(-90)), Math.toRadians(-90))
-                    .addTemporalMarker(9.25, () -> {
+                    .addTemporalMarker(20, () -> {
                         robot.left.setPower(-1);
                         robot.right.setPower(1);
                     })
@@ -295,20 +295,20 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                     .waitSeconds(0.6)
                     .splineToLinearHeading(new Pose2d(52, -65, Math.toRadians(-90)), Math.toRadians(-90))
-                    .addTemporalMarker(11, () -> {
+                    .addTemporalMarker(21.75, () -> {
                         robot.left.setPower(-0.7);
                         robot.right.setPower(0.7);
                         robot.middle.setPower(0.7);
                         robot.rolltop.setPower(-0.7);
                         robot.boxServo.setPower(-0.7);
                     })
-                    .splineToLinearHeading(new Pose2d(52, 18, Math.toRadians(-90)), Math.toRadians(-90))
-                    .addTemporalMarker(13, () -> {
+                    .splineToLinearHeading(new Pose2d(52, 28, Math.toRadians(-90)), Math.toRadians(-90))
+                    .addTemporalMarker(23.75, () -> {
                         target = -1300;
                         robot.arm.setPosition(ARM_SERVO_X);
                     })
                     .lineToLinearHeading(new Pose2d(31, 35, Math.toRadians(-90)))
-                    .addTemporalMarker(15, () -> {
+                    .addTemporalMarker(25.75, () -> {
                         robot.left.setPower(0);
                         robot.right.setPower(0);
                         robot.middle.setPower(0);
@@ -316,15 +316,15 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                         robot.boxServo.setPower(1);
                     })
                     .waitSeconds(1000)
-                    .addTemporalMarker(16, () -> {
+                    .addTemporalMarker(26.75, () -> {
                         robot.boxServo.setPower(0);
                         robot.arm.setPosition(ARM_SERVO_POSITION);
                     })
                     .waitSeconds(500)
-                    .addTemporalMarker(16.5, () -> {
+                    .addTemporalMarker(27.25, () -> {
                         target = 0;
                     })
-                    .build();
+            .build();
         } else {
             test = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                     .addTemporalMarker(0.0002, () -> {
