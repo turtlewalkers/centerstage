@@ -135,7 +135,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
 //                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
 //                .build();
         Trajectory outtake1 = drivetrain.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(30, 24, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30, 22, Math.toRadians(-90)))
                 .build();
 //        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(28, 23, Math.toRadians(-90)))
 //                .strafeRight(14)
@@ -316,7 +316,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
- robot.leftSlide.setPower(1);
+            robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
             while (
                     robot.leftSlide.isBusy() &&
@@ -352,7 +352,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             robot.rightSlide.setTargetPosition(SLIDE_HEIGHT-300);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
- robot.leftSlide.setPower(1);
+            robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
             while (
                     robot.leftSlide.isBusy() &&
@@ -387,7 +387,7 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
             robot.rightSlide.setTargetPosition(0);
             robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
- robot.leftSlide.setPower(1);
+            robot.leftSlide.setPower(1);
             robot.rightSlide.setPower(1);
             while (
                     robot.leftSlide.isBusy() &&
