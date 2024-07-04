@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_TIME;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -15,19 +14,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.ArrayList;
 import java.util.List;
-import android.util.Size;
+
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.camera.OpenCV;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -45,8 +38,6 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-
-import java.util.concurrent.TimeUnit;
 
 /*
  * This OpMode illustrates the basics of TensorFlow Object Detection, using

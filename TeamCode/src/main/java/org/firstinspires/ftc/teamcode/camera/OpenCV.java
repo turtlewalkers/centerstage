@@ -1,16 +1,14 @@
 package org.firstinspires.ftc.teamcode.camera;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.lower;
+import static org.firstinspires.ftc.teamcode.robot.Constants.upper;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
@@ -135,9 +133,10 @@ public class OpenCV extends LinearOpMode {
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
             // red: (100, 100, 100), (180, 255, 255)
-            // blue: 10, 55
-            Scalar lowerYellow = new Scalar(10, 100, 100);
-            Scalar upperYellow = new Scalar(55, 255, 255);
+            // blue: Scalar lowerYellow = new Scalar(90, 50, 70);
+            //            Scalar upperYellow = new Scalar(128, 255, 255);
+            Scalar lowerYellow = new Scalar(lower, 100, 100);
+            Scalar upperYellow = new Scalar(upper, 255, 255);
 
 
             Mat yellowMask = new Mat();
