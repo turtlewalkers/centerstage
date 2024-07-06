@@ -45,7 +45,7 @@ import java.util.List;
 
 @Config
 @Autonomous
-public class AutonomousBlueCloseParkLeft extends LinearOpMode {
+public class AutonomousBlueFar2p2 extends LinearOpMode {
     private PIDController controller;
     int PIXEL_POSITION;
     TurtleRobot robot = new TurtleRobot(this);
@@ -88,97 +88,274 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .addTemporalMarker(0.0002, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(30, 22, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(28, 2, Math.toRadians(90)))
                 .addTemporalMarker(1, () -> {
                     robot.left.setPower(0.1);
                     robot.right.setPower(-0.1);
                 })
-                .waitSeconds(1)
-                .addTemporalMarker(2, () -> {
-                    target = -950;
-                    robot.arm.setPosition(ARM_SERVO_X);
-                })
+                .waitSeconds(1.75)
                 .addTemporalMarker(2.75, () -> {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                 })
-                .lineToLinearHeading(new Pose2d(18, 36, Math.toRadians(-90)))
-                .addTemporalMarker(3.65, () -> {
+                .lineToLinearHeading(new Pose2d(3, 0, Math.toRadians(-80)))
+                .lineToLinearHeading(new Pose2d(3, 60, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(16, 85, Math.toRadians(-90)))
+                .addTemporalMarker(8, () -> {
+                    target = -1000;
+                    robot.arm.setPosition(ARM_SERVO_X);
                     robot.boxServo.setPower(1);
                 })
-                .addTemporalMarker(4.75, () -> {
+                .waitSeconds(0.5)
+                .addTemporalMarker(10, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
                 })
-                .addTemporalMarker(5.25, () -> {
+                .lineToLinearHeading(new Pose2d(3, 77, Math.toRadians(-90)))
+                .addTemporalMarker(10.75, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(6, 32, Math.toRadians(-90)))
+                .waitSeconds(0.001)
+                .splineToLinearHeading(new Pose2d(3, 50, Math.toRadians(-90)), Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(3, 5, Math.toRadians(-90)), Math.toRadians(-90))
+                .addTemporalMarker(13, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
+                .splineToLinearHeading(new Pose2d(30, -34, Math.toRadians(-90)), Math.toRadians(-90),
+                        SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .waitSeconds(0.75)
+                .splineToLinearHeading(new Pose2d(3, 0, Math.toRadians(-90)), Math.toRadians(-90))
+                .addTemporalMarker(18, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                    robot.middle.setPower(1);
+                    robot.rolltop.setPower(-1);
+                    robot.boxServo.setPower(-1);
+                })
+                .splineToLinearHeading(new Pose2d(3, 60, Math.toRadians(-90)), Math.toRadians(-90))
+                .addTemporalMarker(21, () -> {
+                    target = -1300;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .splineToLinearHeading(new Pose2d(30, 84, Math.toRadians(-90)), Math.toRadians(-90))
+                .addTemporalMarker(21.75, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                    robot.middle.setPower(0);
+                    robot.rolltop.setPower(0);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(23.5, () -> {
+                    robot.boxServo.setPower(0);
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(25, () -> {
+                    target = 0;
+                })
                 .build();
         TrajectorySequence middle = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                 .addTemporalMarker(0.0002, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(32, 4, Math.toRadians(-45)))
-                .addTemporalMarker(1, () -> {
+                .forward(29)
+                .addTemporalMarker(0.5, () -> {
                     robot.left.setPower(0.1);
                     robot.right.setPower(-0.1);
                 })
-                .waitSeconds(0.5)
-                .addTemporalMarker(2.75, () -> {
+                .waitSeconds(1.75)
+                .addTemporalMarker(2.25, () -> {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                 })
-                .addTemporalMarker(2, () -> {
+                .back(4.5)
+                .turn(Math.toRadians(-90))
+//                .back(6)
+//                .turn(Math.toRadians(-95))
+//                Drops the ellow pixel on backdrop
+                .addTemporalMarker(6, () -> {
                     target = -950;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
-                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)))
-                .waitSeconds(1)
-                .addTemporalMarker(3.5, () -> {
+                .lineToLinearHeading(new Pose2d(25, 84, Math.toRadians(-90)))
+                .addTemporalMarker(8, () -> {
                     robot.boxServo.setPower(1);
                 })
-                .addTemporalMarker(4.75, () -> {
+                .waitSeconds(1)
+                .addTemporalMarker(10, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
                 })
-                .addTemporalMarker(5.25, () -> {
+                .waitSeconds(0.5)
+                .addTemporalMarker(10.5, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(6, 32, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(3, 77, Math.toRadians(-90)))
+                .waitSeconds(0.001)
+                .splineToLinearHeading(new Pose2d(3, 50, Math.toRadians(-90)), Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(3, 10, Math.toRadians(-90)), Math.toRadians(-90))
+                .addTemporalMarker(13, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
+//                Goes towards pixels to collect from the truss
+                .splineToLinearHeading(new Pose2d(30, -26, Math.toRadians(-90)), Math.toRadians(-90),
+                        SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .waitSeconds(0.75)
+                .back(3)
+//                Comes back
+                .lineToLinearHeading(new Pose2d(3, 5, Math.toRadians(-90)))
+                .addTemporalMarker(18, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                    robot.middle.setPower(1);
+                    robot.rolltop.setPower(-1);
+                    robot.boxServo.setPower(-1);
+                })
+                .lineToLinearHeading(new Pose2d(3, 60, Math.toRadians(-90)))
+                .addTemporalMarker(21, () -> {
+                    target = -1400;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .splineToLinearHeading(new Pose2d(30, 84, Math.toRadians(-90)), Math.toRadians(-90))
+                .addTemporalMarker(21.75, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                    robot.middle.setPower(0);
+                    robot.rolltop.setPower(0);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(23.5, () -> {
+                    robot.boxServo.setPower(0);
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+//                Finishes dropping and parks
+                .waitSeconds(1)
+                .addTemporalMarker(29, () -> {
+                    target = 0;
+                })
                 .build();
+
         TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                 .addTemporalMarker(0.0002, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(30,-3, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(32, -10.5, Math.toRadians(0)))
+                .back(3)
                 .addTemporalMarker(1, () -> {
                     robot.left.setPower(0.1);
                     robot.right.setPower(-0.1);
                 })
-                .waitSeconds(0.5)
-                .addTemporalMarker(2.75, () -> {
+                .waitSeconds(2)
+                .addTemporalMarker(3, () -> {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                 })
-                .addTemporalMarker(2, () -> {
-                    target = -950;
+                .lineToLinearHeading(new Pose2d(3, 3, Math.toRadians(-90)))
+                .back(65)
+                .lineToLinearHeading(new Pose2d(32, 84, Math.toRadians(-90)))
+
+                .addTemporalMarker(8, () -> {
+                    target = -1000;
                     robot.arm.setPosition(ARM_SERVO_X);
-                })
-                .lineToLinearHeading(new Pose2d(34, 36, Math.toRadians(-90)))
-                .waitSeconds(1)
-                .addTemporalMarker(3.5, () -> {
                     robot.boxServo.setPower(1);
                 })
-                .addTemporalMarker(4.75, () -> {
+                .waitSeconds(1)
+                .addTemporalMarker(10, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
                 })
-                .addTemporalMarker(5.25, () -> {
+                .lineToLinearHeading(new Pose2d(3, 77, Math.toRadians(-90)))
+                .addTemporalMarker(12, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(6, 32, Math.toRadians(-90)))
+                .waitSeconds(0.001)
+                .splineToLinearHeading(new Pose2d(3, 50, Math.toRadians(-90)), Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(3, 10, Math.toRadians(-90)), Math.toRadians(-90))
+                .addTemporalMarker(14.5, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
+                .splineToLinearHeading(new Pose2d(30, -26, Math.toRadians(-90)), Math.toRadians(-90),
+                        SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .back(3)
+//                Comes back
+                .lineToLinearHeading(new Pose2d(3, 5, Math.toRadians(-90)))
+                .addTemporalMarker(18, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                    robot.middle.setPower(1);
+                    robot.rolltop.setPower(-1);
+                    robot.boxServo.setPower(-1);
+                })
+                .lineToLinearHeading(new Pose2d(3, 55, Math.toRadians(-90)))
+                .addTemporalMarker(20.5, () -> {
+                    target = -1400;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .splineToLinearHeading(new Pose2d(20, 83, Math.toRadians(-90)), Math.toRadians(-90))
+                .addTemporalMarker(22, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                    robot.middle.setPower(0);
+                    robot.rolltop.setPower(0);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(0.5)
+                .back(4)
+                .addTemporalMarker(24, () -> {
+                    robot.boxServo.setPower(0);
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+//                Finishes dropping and parks
+                .waitSeconds(0.1)
+                .lineToLinearHeading(new Pose2d(3, 80, Math.toRadians(-90)))
+                .addTemporalMarker(25, () -> {
+                    target = 0;
+                })
                 .build();
+
+//                .splineToLinearHeading(new Pose2d(30, -34, Math.toRadians(-90)), Math.toRadians(-90),
+//                        SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+//                .waitSeconds(0.75)
+//                .splineToLinearHeading(new Pose2d(3, -26, Math.toRadians(-90)), Math.toRadians(-90))
+//                .addTemporalMarker(15.5, () -> {
+//                    robot.left.setPower(-1);
+//                    robot.right.setPower(1);
+//                    robot.middle.setPower(1);
+//                    robot.rolltop.setPower(-1);
+//                    robot.boxServo.setPower(-1);
+//                })
+//                .splineToLinearHeading(new Pose2d(52, -60, Math.toRadians(-90)), Math.toRadians(-90))
+//                .addTemporalMarker(17, () -> {
+//                    target = -1300;
+//                    robot.arm.setPosition(ARM_SERVO_X);
+//                })
+//                .splineToLinearHeading(new Pose2d(16, 84, Math.toRadians(-90)), Math.toRadians(-90))
+//                .addTemporalMarker(17.75, () -> {
+//                    robot.left.setPower(0);
+//                    robot.right.setPower(0);
+//                    robot.middle.setPower(0);
+//                    robot.rolltop.setPower(0);
+//                    robot.boxServo.setPower(1);
+//                })
+//                .waitSeconds(0.25)
+//                .addTemporalMarker(18.5, () -> {
+//                    robot.boxServo.setPower(0);
+//                    robot.arm.setPosition(ARM_SERVO_POSITION);
+//                })
+//                .waitSeconds(0.5)
+//                .addTemporalMarker(19, () -> {
+//                    target = 0;
+//                })
+//                .build();
 
         while (!opModeIsActive()) {
             if (cX < 200) {

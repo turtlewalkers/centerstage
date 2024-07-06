@@ -45,7 +45,7 @@ import java.util.List;
 
 @Config
 @Autonomous
-public class AutonomousBlueCloseParkLeft extends LinearOpMode {
+public class AutonomousRedClose2p4 extends LinearOpMode {
     private PIDController controller;
     int PIXEL_POSITION;
     TurtleRobot robot = new TurtleRobot(this);
@@ -88,7 +88,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .addTemporalMarker(0.0002, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(30, 22, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30,3, Math.toRadians(90)))
                 .addTemporalMarker(1, () -> {
                     robot.left.setPower(0.1);
                     robot.right.setPower(-0.1);
@@ -102,8 +102,9 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                 })
-                .lineToLinearHeading(new Pose2d(18, 36, Math.toRadians(-90)))
-                .addTemporalMarker(3.65, () -> {
+                .lineToLinearHeading(new Pose2d(34, -34, Math.toRadians(90)))
+                .forward(3)
+                .addTemporalMarker(3.75, () -> {
                     robot.boxServo.setPower(1);
                 })
                 .addTemporalMarker(4.75, () -> {
@@ -113,13 +114,90 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .addTemporalMarker(5.25, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(6, 32, Math.toRadians(-90)))
+                .waitSeconds(0.001)
+                .splineToLinearHeading(new Pose2d(52, 0, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(52, 45, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(7.9, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
+                .splineToLinearHeading(new Pose2d(44, 77, Math.toRadians(90)), Math.toRadians(90))
+                .waitSeconds(0.75)
+                .splineToLinearHeading(new Pose2d(50, 55, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(10.5, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                    robot.middle.setPower(1);
+                    robot.rolltop.setPower(-1);
+                    robot.boxServo.setPower(-1);
+                })
+                .splineToLinearHeading(new Pose2d(50, -15, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(13, () -> {
+                    target = -1250;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .splineToLinearHeading(new Pose2d(22, -33, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(13.75, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                    robot.middle.setPower(0);
+                    robot.rolltop.setPower(0);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(0.25)
+                .addTemporalMarker(14.5, () -> {
+                    robot.boxServo.setPower(0);
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(15, () -> {
+                    target = 0;
+                })
+                .splineToLinearHeading(new Pose2d(51, 0, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(48, 45, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(17, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
+                .splineToLinearHeading(new Pose2d(31, 77, Math.toRadians(90)), Math.toRadians(90))
+                .waitSeconds(0.75)
+                .splineToLinearHeading(new Pose2d(50, 55, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(20, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                    robot.middle.setPower(1);
+                    robot.rolltop.setPower(-1);
+                    robot.boxServo.setPower(-1);
+                })
+                .splineToLinearHeading(new Pose2d(50, -15, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(22.5, () -> {
+                    target = -1300;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .lineToLinearHeading(new Pose2d(22, -33, Math.toRadians(90)))
+                .addTemporalMarker(24, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                    robot.middle.setPower(0);
+                    robot.rolltop.setPower(0);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(25, () -> {
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .forward(4)
+                .addTemporalMarker(25.5, () -> {
+                    robot.boxServo.setPower(0);
+                    target = 0;
+                })
                 .build();
         TrajectorySequence middle = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                 .addTemporalMarker(0.0002, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(32, 4, Math.toRadians(-45)))
+                .lineToLinearHeading(new Pose2d(29, -8, Math.toRadians(45)))
                 .addTemporalMarker(1, () -> {
                     robot.left.setPower(0.1);
                     robot.right.setPower(-0.1);
@@ -130,10 +208,10 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                     robot.right.setPower(0);
                 })
                 .addTemporalMarker(2, () -> {
-                    target = -950;
+                    target = -1050;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
-                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(29, -34, Math.toRadians(90)))
                 .waitSeconds(1)
                 .addTemporalMarker(3.5, () -> {
                     robot.boxServo.setPower(1);
@@ -145,13 +223,92 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .addTemporalMarker(5.25, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(6, 32, Math.toRadians(-90)))
+                .waitSeconds(0.001)
+                .splineToLinearHeading(new Pose2d(52, 0, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(52, 45, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(7.9, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
+                .splineToLinearHeading(new Pose2d(44, 77, Math.toRadians(90)), Math.toRadians(90))
+                .waitSeconds(0.75)
+                .splineToLinearHeading(new Pose2d(50, 55, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(10.5, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                    robot.middle.setPower(1);
+                    robot.rolltop.setPower(-1);
+                    robot.boxServo.setPower(-1);
+                })
+                .splineToLinearHeading(new Pose2d(50, -15, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(12.5, () -> {
+                    target = -1250;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .splineToLinearHeading(new Pose2d(32, -33, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(13.25, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                    robot.middle.setPower(0);
+                    robot.rolltop.setPower(0);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(0.25)
+                .addTemporalMarker(14, () -> {
+                    robot.boxServo.setPower(0);
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(14.5, () -> {
+                    target = 0;
+                })
+                .splineToLinearHeading(new Pose2d(51, 0, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(48, 45, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(16.5, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
+                .splineToLinearHeading(new Pose2d(31, 77, Math.toRadians(90)), Math.toRadians(90))
+                .waitSeconds(0.75)
+                .splineToLinearHeading(new Pose2d(50, 55, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(19.5, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                    robot.middle.setPower(1);
+                    robot.rolltop.setPower(-1);
+                    robot.boxServo.setPower(-1);
+                })
+                .splineToLinearHeading(new Pose2d(50, -15, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(21.5, () -> {
+                    target = -1300;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .lineToLinearHeading(new Pose2d(32, -33, Math.toRadians(90)))
+                .addTemporalMarker(23, () -> {
+
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                    robot.middle.setPower(0);
+                    robot.rolltop.setPower(0);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(26.5, () -> {
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .forward(4)
+                .addTemporalMarker(29, () -> {
+                    robot.boxServo.setPower(0);
+                    target = 0;
+                })
                 .build();
+
         TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                 .addTemporalMarker(0.0002, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(30,-3, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(27, -23, Math.toRadians(90)))
                 .addTemporalMarker(1, () -> {
                     robot.left.setPower(0.1);
                     robot.right.setPower(-0.1);
@@ -165,11 +322,12 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                     target = -950;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
-                .lineToLinearHeading(new Pose2d(34, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(20, -34, Math.toRadians(90)))
                 .waitSeconds(1)
                 .addTemporalMarker(3.5, () -> {
                     robot.boxServo.setPower(1);
                 })
+                .waitSeconds(0.1)
                 .addTemporalMarker(4.75, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
@@ -177,7 +335,85 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .addTemporalMarker(5.25, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(6, 32, Math.toRadians(-90)))
+                .waitSeconds(0.001)
+                .splineToLinearHeading(new Pose2d(52, -20, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(52, 45, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(7.9, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
+                .splineToLinearHeading(new Pose2d(44, 77, Math.toRadians(90)), Math.toRadians(90))
+                .waitSeconds(0.75)
+                .splineToLinearHeading(new Pose2d(50, 55, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(10.5, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                    robot.middle.setPower(1);
+                    robot.rolltop.setPower(-1);
+                    robot.boxServo.setPower(-1);
+                })
+                .splineToLinearHeading(new Pose2d(50, -15, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(12.5, () -> {
+                    target = -1250;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .splineToLinearHeading(new Pose2d(32, -35, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(13.25, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                    robot.middle.setPower(0);
+                    robot.rolltop.setPower(0);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(0.25)
+                .addTemporalMarker(14, () -> {
+                    robot.boxServo.setPower(0);
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(14.5, () -> {
+                    target = 0;
+                })
+                .splineToLinearHeading(new Pose2d(51, -20, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(48, 45, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(16.5, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                })
+                .splineToLinearHeading(new Pose2d(27, 77, Math.toRadians(90)), Math.toRadians(90))
+                .waitSeconds(0.75)
+                .splineToLinearHeading(new Pose2d(50, 55, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(19.5, () -> {
+                    robot.left.setPower(-1);
+                    robot.right.setPower(1);
+                    robot.middle.setPower(1);
+                    robot.rolltop.setPower(-1);
+                    robot.boxServo.setPower(-1);
+                })
+                .splineToLinearHeading(new Pose2d(50, -15, Math.toRadians(90)), Math.toRadians(90))
+                .addTemporalMarker(21.5, () -> {
+                    target = -1300;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .lineToLinearHeading(new Pose2d(32, -35, Math.toRadians(90)))
+                .addTemporalMarker(23, () -> {
+
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                    robot.middle.setPower(0);
+                    robot.rolltop.setPower(0);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(24, () -> {
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .forward(4)
+                .addTemporalMarker(25.5, () -> {
+                    robot.boxServo.setPower(0);
+                    target = 0;
+                })
                 .build();
 
         while (!opModeIsActive()) {
@@ -286,8 +522,8 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
 
             // red: (100, 100, 100), (180, 255, 255)
             // blue: 10, 55
-            Scalar lowerYellow = new Scalar(10, 100, 100);
-            Scalar upperYellow = new Scalar(55, 255, 255);
+            Scalar lowerYellow = new Scalar(100, 100, 100);
+            Scalar upperYellow = new Scalar(180, 255, 255);
 
 
             Mat yellowMask = new Mat();
