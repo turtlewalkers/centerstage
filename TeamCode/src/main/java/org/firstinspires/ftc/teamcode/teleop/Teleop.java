@@ -100,7 +100,7 @@ public class Teleop extends LinearOpMode {
             robot.left.setPower(intakePower);
             robot.right.setPower(-intakePower);
             robot.middle.setPower(-intakePower);
-            robot.rolltop.setPower(intakePower);
+            robot.rolltop.setPower(intakePower*10);
             if (intakePower != 0.15) {
                 robot.boxServo.setPower(intakePower);
             } else {
