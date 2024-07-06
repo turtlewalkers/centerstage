@@ -1,37 +1,32 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_TIME;
+import static org.firstinspires.ftc.teamcode.robot.Constants.f;
+import static org.firstinspires.ftc.teamcode.robot.Constants.kD;
+import static org.firstinspires.ftc.teamcode.robot.Constants.kI;
+import static org.firstinspires.ftc.teamcode.robot.Constants.kP;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ticks_in_degrees;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import java.util.ArrayList;
-import java.util.List;
-import android.util.Size;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ARM_SERVO_Y;
-
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -45,47 +40,16 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
-/*
- * This OpMode illustrates the basics of TensorFlow Object Detection, using
- * the easiest way.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
- */
+@Config
 @Autonomous
 public class AutonomousBlueFarParkLeft extends LinearOpMode {
+    private PIDController controller;
+    int PIXEL_POSITION;
     TurtleRobot robot = new TurtleRobot(this);
-    int SLIDE_HEIGHT = -1000;
-    private ElapsedTime runtime = new ElapsedTime();
-    int PIXEL_POSITION = 1;
-
-    /**
-     * The variable to store our instance of the TensorFlow Object Detection processor.
-     */
-    private AprilTagProcessor aprilTag;
-    /**
-     * The variable to store our instance of the vision portal.
-     */
-    private VisionPortal visionPortal;
-
-    int DESIRED_TAG_ID = 4; // TODO: change this when needed
-    final double DESIRED_DISTANCE = 2.5;
-    final double SPEED_GAIN  =  0.02  ;
-    final double STRAFE_GAIN =  0.015 ;
-    final double TURN_GAIN   =  0.01  ;
-
-    final double MAX_AUTO_SPEED = 0.5;
-    final double MAX_AUTO_STRAFE= 0.5;
-    final double MAX_AUTO_TURN  = 0.3;
-
-    private AprilTagDetection desiredTag = null;
-
-    private DistanceSensor leftDistance;
-    private DistanceSensor rightDistance;
-    private DistanceSensor middleDistance;
-
+    int target = 0;
     double cX = 0;
     double cY = 0;
     double width = 0;
@@ -97,84 +61,20 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
     // Calculate the distance using the formula
     public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
     public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
-
+    TrajectorySequence test;
     @Override
     public void runOpMode() {
-        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        controller = new PIDController(kP, kI, kD);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot.init(hardwareMap);
-
-        leftDistance = hardwareMap.get(DistanceSensor.class, "dl");
-        rightDistance = hardwareMap.get(DistanceSensor.class, "dr");
-        middleDistance = hardwareMap.get(DistanceSensor.class, "dm");
-
-        boolean targetFound = false;
-        double drive = 0;
-        double strafe = 0;
-        double turn = 0;
-
         robot.leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         robot.leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        robot.leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        /*
-        Trajectories
-         */
-
-        Trajectory detect = drivetrain.trajectoryBuilder(new Pose2d())
-                .forward(29)
-                .build();
-
-//        Trajectory pixelposition1 = drivetrain.trajectoryBuilder(detect.end())
-//                .splineTo(new Vector2d(25, 0), Math.toRadians(-90))
-//                .build();
-        Trajectory outtake1 = drivetrain.trajectoryBuilder(detect.end())
-                .lineToLinearHeading(new Pose2d(28, 4, Math.toRadians(90)))
-                .build();
-        Trajectory goUnder1 = drivetrain.trajectoryBuilder(new Pose2d(27, 0, Math.toRadians(90)))
-                .strafeLeft(23)
-                .build();
-        Trajectory backboard1 = drivetrain.trajectoryBuilder(new Pose2d(3, 0, Math.toRadians(-90)))
-                .back(70)
-                .build();
-        Trajectory camera1 = drivetrain.trajectoryBuilder(backboard1.end())
-                .lineToLinearHeading(new Pose2d(24, 84, Math.toRadians(-90)))
-                .build();
-
-//        Trajectory pixelposition2 = drivetrain.trajectoryBuilder(detect.end())
-//                .forward(25)
-//                .build();
-        Trajectory goback2 = drivetrain.trajectoryBuilder(detect.end())
-                .back(6)
-                .build();
-        Trajectory backboard2 = drivetrain.trajectoryBuilder(new Pose2d(26, 0, Math.toRadians(-90)))
-                .back(50)
-                .build();
-        Trajectory camera2 = drivetrain.trajectoryBuilder(backboard2.end())
-                .lineToLinearHeading(new Pose2d(27, 84, Math.toRadians(-90)))
-                .build();
-
-        Trajectory pixelposition3 = drivetrain.trajectoryBuilder(detect.end())
-                .splineTo(new Vector2d(30,-1), Math.toRadians(-90))
-                .build();
-        Trajectory goUnder3 = drivetrain.trajectoryBuilder(pixelposition3.end())
-                .lineToLinearHeading(new Pose2d(3, 3, Math.toRadians(-90)))
-                .build();
-        Trajectory backboard3 = drivetrain.trajectoryBuilder(new Pose2d(3, 3, Math.toRadians(-90)))
-                .back(65)
-                .build();
-        Trajectory camera3 = drivetrain.trajectoryBuilder(backboard3.end())
-                .lineToLinearHeading(new Pose2d(30, 84, Math.toRadians(-90)))
-                .build();
-        Trajectory park = drivetrain.trajectoryBuilder(new Pose2d(3, 70, Math.toRadians(-90)))
-                .back(15)
-                .build();
 
         initOpenCV();
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -184,192 +84,154 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
         telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
         telemetry.addData("Distance in Inch", (getDistance(width)));
 
+        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
+                .addTemporalMarker(0.0002, () -> {
+                    target = 0;
+                })
+                .lineToLinearHeading(new Pose2d(28, 4, Math.toRadians(90)))
+                .addTemporalMarker(1, () -> {
+                    robot.left.setPower(0.1);
+                    robot.right.setPower(-0.1);
+                })
+                .waitSeconds(1.75)
+                .addTemporalMarker(2.75, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                })
+                .lineToLinearHeading(new Pose2d(3, 0, Math.toRadians(-80)))
+                .lineToLinearHeading(new Pose2d(3, 60, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(16, 85, Math.toRadians(-90)))
+                .addTemporalMarker(8, () -> {
+                    target = -1000;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(10, () -> {
+                    robot.boxServo.setPower(0);
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .lineToLinearHeading(new Pose2d(3, 77, Math.toRadians(-90)))
+                .addTemporalMarker(11.5, () -> {
+                    target = 0;
+                })
+        .build();
+        TrajectorySequence middle = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
+                .addTemporalMarker(0.0002, () -> {
+                    target = 0;
+                })
+                .forward(29)
+                .addTemporalMarker(0.5, () -> {
+                    robot.left.setPower(0.1);
+                    robot.right.setPower(-0.1);
+                })
+                .waitSeconds(1.75)
+                .addTemporalMarker(2.25, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                })
+                .back(4.5)
+                .turn(Math.toRadians(-90))
+//                .back(6)
+//                .turn(Math.toRadians(-95))
+                .addTemporalMarker(6, () -> {
+                    target = -1000;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                })
+                .lineToLinearHeading(new Pose2d(27, 84, Math.toRadians(-90)))
+                .addTemporalMarker(7, () -> {
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(8, () -> {
+                    robot.boxServo.setPower(0);
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(8.5, () -> {
+                    target = 0;
+                })
+                .lineToLinearHeading(new Pose2d(3, 77, Math.toRadians(-90)))
+        .build();
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
+                .addTemporalMarker(0.0002, () -> {
+                    target = 0;
+                })
+                .splineToLinearHeading(new Pose2d(30,-1, Math.toRadians(-90)), Math.toRadians(-90))
+                .addTemporalMarker(1, () -> {
+                    robot.left.setPower(0.1);
+                    robot.right.setPower(-0.1);
+                })
+                .waitSeconds(2)
+                .addTemporalMarker(3, () -> {
+                    robot.left.setPower(0);
+                    robot.right.setPower(0);
+                })
+                .lineToLinearHeading(new Pose2d(3, 3, Math.toRadians(-90)))
+                .back(65)
+                .lineToLinearHeading(new Pose2d(30, 84, Math.toRadians(-90)))
+
+                .addTemporalMarker(8, () -> {
+                    target = -1000;
+                    robot.arm.setPosition(ARM_SERVO_X);
+                    robot.boxServo.setPower(1);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(10, () -> {
+                    robot.boxServo.setPower(0);
+                    robot.arm.setPosition(ARM_SERVO_POSITION);
+                })
+                .lineToLinearHeading(new Pose2d(3, 77, Math.toRadians(-90)))
+                .addTemporalMarker(12, () -> {
+                    target = 0;
+                })
+        .build();
+
         while (!opModeIsActive()) {
             if (cX < 200) {
                 telemetry.addLine("Position 1");
                 PIXEL_POSITION = 1;
+                test = left;
             } else if (cX < 400) {
                 telemetry.addLine("Position 2");
                 PIXEL_POSITION = 2;
+                test = middle;
             } else if (cX > 400) {
                 telemetry.addLine("Position 3");
                 PIXEL_POSITION = 3;
+                test = right;
             } else {
                 telemetry.addLine("Position 1");
                 PIXEL_POSITION = 1;
+                test = left;
             }
             telemetry.update();
         }
+
         waitForStart();
+        drive.followTrajectorySequenceAsync(test);
+        while (opModeIsActive()) {
+            drive.update();
+            int leftPos = robot.leftSlide.getCurrentPosition();
+            int rightPos = robot.rightSlide.getCurrentPosition();
+            double leftPID = controller.calculate(leftPos, target);
+            double leftff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+            double leftpower = leftPID + leftff;
+            double rightPID = controller.calculate(rightPos, target);
+            double rightff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+            double rightPower = rightPID + rightff;
+            robot.leftSlide.setPower(leftpower);
+            robot.rightSlide.setPower(rightPower);
 
-        if (opModeIsActive()) {
-            /**
-             * Pixel detection
-             */
-
-            if (PIXEL_POSITION == 1) {
-                drivetrain.followTrajectory(detect);
-                drivetrain.followTrajectory(outtake1);
-
-                // outake
-                robot.left.setPower(0.1);
-                robot.right.setPower(-0.1);
-                sleep(2000);
-                robot.left.setPower(0);
-                robot.right.setPower(0);
-                sleep(1000);
-
-                drivetrain.followTrajectory(goUnder1);
-                drivetrain.turn(Math.toRadians(180));
-                drivetrain.followTrajectory(backboard1);
-                drivetrain.followTrajectory(camera1);
-
-            } else if (PIXEL_POSITION == 2) {
-                drivetrain.followTrajectory(detect);
-//                drivetrain.followTrajectory(pixelposition2);
-                robot.left.setPower(0.1);
-                robot.right.setPower(-0.1);
-                sleep(1750);
-                robot.left.setPower(0);
-                robot.right.setPower(0);
-
-                drivetrain.followTrajectory(goback2);
-                drivetrain.turn(Math.toRadians(-95));
-                drivetrain.followTrajectory(backboard2);
-                drivetrain.followTrajectory(camera2);
-            } else {
-                drivetrain.followTrajectory(detect);
-                telemetry.addLine("Pixel position Else");
-                drivetrain.followTrajectory(pixelposition3);
-
-                robot.left.setPower(0.1);
-                robot.right.setPower(-0.1);
-                sleep(2000);
-                robot.left.setPower(0);
-                robot.right.setPower(0);
-
-                drivetrain.followTrajectory(goUnder3);
-                drivetrain.followTrajectory(backboard3);
-                drivetrain.followTrajectory(camera3);
-            }
-
-            /**
-             * April Tag
-             */
-
-//            DESIRED_TAG_ID = PIXEL_POSITION;
-//
-//            runtime.reset();
-//            while (runtime.seconds() < 7) {
-//                // initial detection
-//                targetFound = false;
-//                desiredTag = null;
-//
-//                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-//                for (AprilTagDetection detection : currentDetections) {
-//                    if ((detection.metadata != null) &&
-//                            ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))) {
-//                        targetFound = true;
-//                        desiredTag = detection;
-//                        break;
-//                    } else {
-//                        telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
-//                    }
-//                }
-//
-//                if (targetFound) {
-//                    telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
-//                    telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-//                    telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
-//                    telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
-//                    telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
-//
-//
-//                    double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-//                    double headingError = -desiredTag.ftcPose.bearing;
-//                    double yawError = desiredTag.ftcPose.yaw;
-//
-//                    drive = -Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-//                    turn = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-//                    strafe = -Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-//
-//                    telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-//                } else {
-//                    telemetry.addData(">", "Stopping...");
-//                    drive = 0;
-//                    strafe = 0;
-//                    turn = 0;
-//                }
-//
-//                telemetry.update();
-//                move(drive, strafe, turn);
-//                sleep(20);
-//            }
-//
-//            // strafe right a little bit
-//            move(0, 0.5, 0);
-//            sleep(200);
-//            move(0, 0, 0);
-
-            // move linear slide up
-            robot.leftSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.rightSlide.setTargetPosition(SLIDE_HEIGHT);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
-            while (
-                    robot.leftSlide.isBusy() &&
-                            robot.rightSlide.isBusy() &&
-                            opModeIsActive()) {
-                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-                telemetry.addLine("running");
-                telemetry.update();
-                idle();
-            }
-
-            robot.arm.setPosition(ARM_SERVO_X);
-
-
-            // move servo and score pixel
-            robot.boxServo.setPower(1);
-            sleep(1000);
-            robot.boxServo.setPower(0);
-
-            robot.arm.setPosition(ARM_SERVO_POSITION);
-            sleep(1000);
-            robot.leftSlide.setTargetPosition(0);
-            robot.rightSlide.setTargetPosition(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftSlide.setPower(1);
-            robot.rightSlide.setPower(1);
-            while (
-                    robot.leftSlide.isBusy() &&
-                            robot.rightSlide.isBusy() &&
-                            opModeIsActive()) {
-                telemetry.addData("Left slide", robot.leftSlide.getCurrentPosition());
-                telemetry.addData("Target", robot.leftSlide.getTargetPosition());
-                telemetry.addData("Right slide", robot.rightSlide.getCurrentPosition());
-                telemetry.addLine("running");
-                telemetry.update();
-                idle();
-            }
-            robot.leftSlide.setPower(0);
-            robot.rightSlide.setPower(0);
-            robot.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            drivetrain.followTrajectory(park);
-
-            // Save more CPU resources when camera is no longer needed.
-            visionPortal.close();
-
-        } // end runOpMode()
+            telemetry.addData("leftPos ", leftPos);
+            telemetry.addData("rightPos ", rightPos);
+            telemetry.addData("left power ", leftpower);
+            telemetry.addData("right power", rightPower);
+            telemetry.addData("target ", target);
+            telemetry.update();
+        }
     }
-
     private void initOpenCV() {
 
         // Create an instance of the camera
@@ -470,5 +332,4 @@ public class AutonomousBlueFarParkLeft extends LinearOpMode {
         double distance = (objectWidthInRealWorldUnits * focalLength) / width;
         return distance;
     }
-
-}   // end class
+}
