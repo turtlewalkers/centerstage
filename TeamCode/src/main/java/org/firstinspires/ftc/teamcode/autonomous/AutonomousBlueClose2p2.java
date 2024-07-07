@@ -258,8 +258,8 @@ public class AutonomousBlueClose2p2 extends LinearOpMode {
                     target = 0;
                 })
                 .waitSeconds(0.001)
-                .splineToLinearHeading(new Pose2d(51, 25, Math.toRadians(-90)), Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(51, -50, Math.toRadians(-90)), Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(51, 25, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(51, -50, Math.toRadians(90)), Math.toRadians(90))
                 .addTemporalMarker(8.4, () -> {
                     robot.left.setPower(-1);
                     robot.right.setPower(1);
