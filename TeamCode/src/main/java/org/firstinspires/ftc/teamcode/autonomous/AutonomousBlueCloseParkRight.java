@@ -287,7 +287,7 @@ public class AutonomousBlueCloseParkRight extends LinearOpMode {
             // red: (100, 100, 100), (180, 255, 255)
             // blue: 10, 55
             Scalar lowerYellow = new Scalar(10, 100, 100);
-            Scalar upperYellow = new Scalar(55, 255, 255);
+            Scalar upperYellow = new Scalar(140, 255, 255);
 
 
             Mat yellowMask = new Mat();

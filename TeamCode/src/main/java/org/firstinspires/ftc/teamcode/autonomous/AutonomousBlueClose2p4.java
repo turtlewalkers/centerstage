@@ -120,7 +120,7 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                     robot.left.setPower(-1);
                     robot.right.setPower(1);
                 })
-                .splineToLinearHeading(new Pose2d(47, -74, Math.toRadians(-90)), Math.toRadians(-90),
+                .splineToLinearHeading(new Pose2d(48, -74, Math.toRadians(-90)), Math.toRadians(-90),
                         SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .waitSeconds(0.75)
@@ -160,7 +160,7 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                     robot.left.setPower(-1);
                     robot.right.setPower(1);
                 })
-                .splineToLinearHeading(new Pose2d(36, -74, Math.toRadians(-90)), Math.toRadians(-90),
+                .splineToLinearHeading(new Pose2d(39, -74, Math.toRadians(-90)), Math.toRadians(-90),
                         SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .waitSeconds(0.75)
@@ -213,7 +213,7 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                     target = -950;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
-                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(26, 36, Math.toRadians(-90)))
                 .waitSeconds(1)
                 .addTemporalMarker(3.5, () -> {
                     robot.boxServo.setPower(1);
@@ -226,13 +226,13 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                     target = 0;
                 })
                 .waitSeconds(0.001)
-                .splineToLinearHeading(new Pose2d(51, 25, Math.toRadians(-90)), Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(54, 25, Math.toRadians(-90)), Math.toRadians(-90))
                 .splineToLinearHeading(new Pose2d(51, -50, Math.toRadians(-90)), Math.toRadians(-90))
                 .addTemporalMarker(7.9, () -> {
                     robot.left.setPower(-1);
                     robot.right.setPower(1);
                 })
-                .splineToLinearHeading(new Pose2d(47, -74, Math.toRadians(-90)), Math.toRadians(-90),
+                .splineToLinearHeading(new Pose2d(48, -74, Math.toRadians(-90)), Math.toRadians(-90),
                         SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .waitSeconds(0.75)
@@ -250,7 +250,7 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
                 .splineToLinearHeading(new Pose2d(31, 33, Math.toRadians(-90)), Math.toRadians(-90))
-                .addTemporalMarker(13.25, () -> {
+                .addTemporalMarker(13.5, () -> {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                     robot.middle.setPower(0);
@@ -266,13 +266,13 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                 .addTemporalMarker(14.5, () -> {
                     target = 0;
                 })
-                .splineToLinearHeading(new Pose2d(51, 25, Math.toRadians(-90)), Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(54, 25, Math.toRadians(-90)), Math.toRadians(-90))
                 .splineToLinearHeading(new Pose2d(51, -50, Math.toRadians(-90)), Math.toRadians(-90))
                 .addTemporalMarker(16.5, () -> {
                     robot.left.setPower(-1);
                     robot.right.setPower(1);
                 })
-                .splineToLinearHeading(new Pose2d(36, -74, Math.toRadians(-90)), Math.toRadians(-90),
+                .splineToLinearHeading(new Pose2d(39, -74, Math.toRadians(-90)), Math.toRadians(-90),
                         SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .waitSeconds(0.75)
@@ -290,7 +290,7 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
                 .splineToLinearHeading(new Pose2d(31, 33, Math.toRadians(-90)), Math.toRadians(-90))
-                .addTemporalMarker(23.75, () -> {
+                .addTemporalMarker(24.25, () -> {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                     robot.middle.setPower(0);
@@ -345,7 +345,7 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                     robot.left.setPower(-1);
                     robot.right.setPower(1);
                 })
-                .splineToLinearHeading(new Pose2d(47, -74, Math.toRadians(-90)), Math.toRadians(-90),
+                .splineToLinearHeading(new Pose2d(48, -74, Math.toRadians(-90)), Math.toRadians(-90),
                         SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .waitSeconds(0.75)
@@ -385,7 +385,7 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
                     robot.left.setPower(-1);
                     robot.right.setPower(1);
                 })
-                .splineToLinearHeading(new Pose2d(36, -74, Math.toRadians(-90)), Math.toRadians(-90),
+                .splineToLinearHeading(new Pose2d(39, -74, Math.toRadians(-90)), Math.toRadians(-90),
                         SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .waitSeconds(0.75)
@@ -527,8 +527,8 @@ public class AutonomousBlueClose2p4 extends LinearOpMode {
 
             // red: (100, 100, 100), (180, 255, 255)
             // blue: 10, 55
-            Scalar lowerYellow = new Scalar(10, 100, 100);
-            Scalar upperYellow = new Scalar(55, 255, 255);
+            Scalar lowerYellow = new Scalar(0, 100, 100);
+            Scalar upperYellow = new Scalar(50, 255, 255);
 
 
             Mat yellowMask = new Mat();
