@@ -261,22 +261,22 @@ public class AutonomousRedFar2p2 extends LinearOpMode {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                 })
-                .addTemporalMarker(7, () -> {
-                    target = -950;
+                .addTemporalMarker(6, () -> {
+                    target = -900;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
                 .lineToLinearHeading(new Pose2d(2.5, 2, Math.toRadians(90)))
                 .lineToLinearHeading(new Pose2d(2.5, -68, Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(22, -84, Math.toRadians(90)))
-                .addTemporalMarker(9, () -> {
+                .lineToLinearHeading(new Pose2d(22, -85, Math.toRadians(90)))
+                .addTemporalMarker(8, () -> {
                     robot.boxServo.setPower(1);
                 })
                 .waitSeconds(0.1)
-                .addTemporalMarker(10, () -> {
+                .addTemporalMarker(9, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
                 })
-                .addTemporalMarker(10.5, () -> {
+                .addTemporalMarker(9.5, () -> {
                     target = -5;
                 })
                 .splineToLinearHeading(new Pose2d(3, -50, Math.toRadians(90)), Math.toRadians(90))
@@ -292,7 +292,7 @@ public class AutonomousRedFar2p2 extends LinearOpMode {
                 .back(3)
 //                Comes back
                 .lineToLinearHeading(new Pose2d(3, -5, Math.toRadians(90)))
-                .addTemporalMarker(18, () -> {
+                .addTemporalMarker(17, () -> {
                     robot.left.setPower(-1);
                     robot.right.setPower(1);
                     robot.middle.setPower(1);
@@ -300,12 +300,12 @@ public class AutonomousRedFar2p2 extends LinearOpMode {
                     robot.boxServo.setPower(-1);
                 })
                 .lineToLinearHeading(new Pose2d(3, -45, Math.toRadians(90)))
-                .addTemporalMarker(20.5, () -> {
+                .addTemporalMarker(19, () -> {
                     target = -1400;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
-                .splineToLinearHeading(new Pose2d(26, -82, Math.toRadians(90)), Math.toRadians(90))
-                .addTemporalMarker(21.5, () -> {
+                .lineToLinearHeading(new Pose2d(28, -85, Math.toRadians(90)))
+                .addTemporalMarker(20, () -> {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                     robot.middle.setPower(0);
@@ -313,17 +313,18 @@ public class AutonomousRedFar2p2 extends LinearOpMode {
                     robot.boxServo.setPower(1);
                 })
                 .waitSeconds(0.5)
-                .back(4)
+//                .back(4)
                 .addTemporalMarker(24, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
                 })
 //                Finishes dropping and parks
                 .waitSeconds(0.1)
-                .lineToLinearHeading(new Pose2d(3, -80, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(3, -75, Math.toRadians(90)))
                 .addTemporalMarker(25, () -> {
                     target = 0;
                 })
+                .back(5)
                 .build();
 
         while (!opModeIsActive()) {

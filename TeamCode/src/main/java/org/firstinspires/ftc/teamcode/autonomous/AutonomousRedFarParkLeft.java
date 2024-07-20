@@ -84,77 +84,80 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
         telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
         telemetry.addData("Distance in Inch", (getDistance(width)));
 
+        int delay = 15;
         TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
+                .waitSeconds(delay)
                 .addTemporalMarker(0.0002, () -> {
                     target = 0;
                 })
                 .lineToLinearHeading(new Pose2d(31,2, Math.toRadians(90)))
-                .addTemporalMarker(1, () -> {
+                .addTemporalMarker(1 + delay, () -> {
                     robot.left.setPower(0.1);
                     robot.right.setPower(-0.1);
                 })
                 .waitSeconds(1)
-                .addTemporalMarker(2.75, () -> {
+                .addTemporalMarker(2.75 + delay, () -> {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                 })
                 .lineToLinearHeading(new Pose2d(51, 2, Math.toRadians(90)))
                 .back(70)
-                .addTemporalMarker(7, () -> {
+                .addTemporalMarker(7 + delay, () -> {
                     target = -950;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
                 .lineToLinearHeading(new Pose2d(36, -84, Math.toRadians(90)))
-                .addTemporalMarker(8, () -> {
+                .addTemporalMarker(8 + delay, () -> {
                     robot.boxServo.setPower(1);
                 })
                 .waitSeconds(1)
-                .addTemporalMarker(10, () -> {
+                .addTemporalMarker(10 + delay, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
                 })
                 .waitSeconds(1)
                 .forward(3)
-                .addTemporalMarker(12.5, () -> {
+                .addTemporalMarker(12.5 + delay, () -> {
                     target = 0;
                 })
                 .lineToLinearHeading(new Pose2d(50, -82, Math.toRadians(90)))
                 .back(7)
                 .build();
         TrajectorySequence middle = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
-                .addTemporalMarker(0.0002, () -> {
+                .waitSeconds(delay)
+                .addTemporalMarker(0.0002 + delay, () -> {
                     target = 0;
                 })
                 .forward(29)
                 .back(1)
-                .addTemporalMarker(0.9, () -> {
+                .addTemporalMarker(0.9 + delay, () -> {
                     robot.left.setPower(0.1);
                     robot.right.setPower(-0.1);
                 })
                 .waitSeconds(0.5)
-                .addTemporalMarker(2.75, () -> {
+                .addTemporalMarker(2.75 + delay, () -> {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                 })
                 .back(5)
                 .turn(Math.toRadians(95))
                 .lineToLinearHeading(new Pose2d(27, -84, Math.toRadians(90)))
-                .addTemporalMarker(6, () -> {
+                .addTemporalMarker(6 + delay, () -> {
                     target = -950;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
                 .waitSeconds(1)
-                .addTemporalMarker(7, () -> {
+                .addTemporalMarker(7 + delay, () -> {
                     robot.boxServo.setPower(1);
                 })
                 .waitSeconds(1)
-                .addTemporalMarker(8.5, () -> {
+                .addTemporalMarker(8.5 + delay, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
                 })
                 .waitSeconds(1)
                 .forward(4)
-                .addTemporalMarker(9.5, () -> {
+                .addTemporalMarker(9.5 + delay, () -> {
                     target = 0;
                 })
                 .lineToLinearHeading(new Pose2d(50, -82, Math.toRadians(90)))
@@ -162,21 +165,22 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
                 .build();
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
+                .waitSeconds(delay)
                 .addTemporalMarker(0.0002, () -> {
                     target = 0;
                 })
                 .strafeLeft(3)
                 .lineToLinearHeading(new Pose2d(27, -2, Math.toRadians(-90)))
-                .addTemporalMarker(1, () -> {
+                .addTemporalMarker(1 + delay, () -> {
                     robot.left.setPower(0.1);
                     robot.right.setPower(-0.1);
                 })
                 .waitSeconds(0.5)
-                .addTemporalMarker(2.75, () -> {
+                .addTemporalMarker(2.75 + delay, () -> {
                     robot.left.setPower(0);
                     robot.right.setPower(0);
                 })
-                .addTemporalMarker(7, () -> {
+                .addTemporalMarker(7 + delay, () -> {
                     target = -950;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
@@ -184,16 +188,16 @@ public class AutonomousRedFarParkLeft extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(51, -74, Math.toRadians(90)))
                 .lineToLinearHeading(new Pose2d(20, -84, Math.toRadians(90)))
                 .waitSeconds(1)
-                .addTemporalMarker(8, () -> {
+                .addTemporalMarker(8 + delay, () -> {
                     robot.boxServo.setPower(1);
                 })
                 .waitSeconds(0.1)
                 .forward(3)
-                .addTemporalMarker(10, () -> {
+                .addTemporalMarker(10 + delay, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
                 })
-                .addTemporalMarker(12, () -> {
+                .addTemporalMarker(12 + delay, () -> {
                     target = 0;
                 })
                 .lineToLinearHeading(new Pose2d(50, -82, Math.toRadians(90)))

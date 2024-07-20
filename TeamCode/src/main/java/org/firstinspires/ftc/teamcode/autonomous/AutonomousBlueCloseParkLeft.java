@@ -113,7 +113,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .addTemporalMarker(5.25, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(6, 32, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(3, 30, Math.toRadians(-90)))
                 .build();
         TrajectorySequence middle = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                 .addTemporalMarker(0.0002, () -> {
@@ -130,22 +130,24 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                     robot.right.setPower(0);
                 })
                 .addTemporalMarker(2, () -> {
-                    target = -950;
+                    target = -825;
                     robot.arm.setPosition(ARM_SERVO_X);
                 })
-                .lineToLinearHeading(new Pose2d(25.5, 36, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(25.5, 37, Math.toRadians(-90)))
                 .waitSeconds(1)
                 .addTemporalMarker(3.5, () -> {
-                    robot.boxServo.setPower(1);
+                    robot.boxServo.setPower(0.4);
                 })
-                .addTemporalMarker(4.75, () -> {
+                .lineToLinearHeading(new Pose2d(3, 32, Math.toRadians(-90)))
+                .waitSeconds(1)
+                .addTemporalMarker(5, () -> {
                     robot.boxServo.setPower(0);
                     robot.arm.setPosition(ARM_SERVO_POSITION);
                 })
-                .addTemporalMarker(5.25, () -> {
+                .waitSeconds(3)
+                .addTemporalMarker(8, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(6, 32, Math.toRadians(-90)))
                 .build();
         TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                 .addTemporalMarker(0.0002, () -> {
@@ -177,7 +179,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
                 .addTemporalMarker(5.25, () -> {
                     target = 0;
                 })
-                .lineToLinearHeading(new Pose2d(6, 32, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(3, 32, Math.toRadians(-90)))
                 .build();
 
         while (!opModeIsActive()) {
@@ -287,7 +289,7 @@ public class AutonomousBlueCloseParkLeft extends LinearOpMode {
             // red: (100, 100, 100), (180, 255, 255)
             // blue: 10, 55
             Scalar lowerYellow = new Scalar(10, 100, 100);
-            Scalar upperYellow = new Scalar(55, 255, 255);
+            Scalar upperYellow = new Scalar(140, 255, 255);
 
 
             Mat yellowMask = new Mat();
